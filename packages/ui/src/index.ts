@@ -19,5 +19,8 @@ export type { OpcionMenu, OpcionesMenu } from './menu';
 export { crearPantalla } from './pantalla';
 export type { OpcionesPantalla } from './pantalla';
 
+export { crearBarraProgreso } from './barra';
+export type { BarraProgreso, OpcionesBarra } from './barra';
+
 export { crearElemento, idUnico, TOQUE_MINIMO_PX, unirClases } from './accesibilidad';
 export type { OpcionesElemento } from './accesibilidad';

@@ -51,7 +51,9 @@
 .js-tarjeta,
 .js-tarjeta *,
 .js-boton,
-.js-boton * {
+.js-boton *,
+.js-barra,
+.js-barra * {
   box-sizing: border-box;
 }
 
@@ -157,6 +159,46 @@
 /* El boton de volver queda pegado a la izquierda y no se estira */
 .js-boton--volver {
   align-self: flex-start;
+}
+
+/* ---------- Barra de progreso ---------- */
+
+.js-barra {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.js-barra__etiqueta {
+  margin: 0;
+  font-size: var(--js-texto-cuerpo);
+  font-weight: 700;
+  color: var(--js-color-texto);
+}
+
+/* La pista es alta a proposito: se ve de lejos y perdona el pulso */
+.js-barra__pista {
+  position: relative;
+  overflow: hidden;
+  height: 2.5rem;
+  border: 0.25rem solid var(--js-color-borde);
+  border-radius: var(--js-radio);
+  background-color: var(--js-color-superficie);
+}
+
+.js-barra__relleno {
+  height: 100%;
+  width: 0%;
+  border-radius: 1rem;
+  background-color: var(--js-color-primario);
+  transition: width 90ms linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js-barra__relleno {
+    transition: none;
+  }
 }
 
 /* ---------- Menu ---------- */

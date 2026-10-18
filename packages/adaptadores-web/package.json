@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Implementaciones de los puertos para el navegador (y para el WebView de Android): video HTML, audio WebAudio, input tactil, almacenamiento local",
+  "description": "Implementaciones de los puertos para el navegador (y para el WebView de Android): video HTML, audio WebAudio, input tactil, gestos QTE, almacenamiento local",
   "exports": {
     ".": "./src/index.ts"
   },
   "dependencies": {
+    "@juegosemi/gestos": "*",
     "@juegosemi/puertos": "*"
   }
 }

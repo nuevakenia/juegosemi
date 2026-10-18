@@ -7,6 +7,7 @@
       "@juegosemi/contenido": ["./packages/contenido/src/index.ts"],
       "@juegosemi/motor": ["./packages/motor/src/index.ts"],
       "@juegosemi/logica": ["./packages/logica/src/index.ts"],
+      "@juegosemi/gestos": ["./packages/gestos/src/index.ts"],
       "@juegosemi/personajes": ["./packages/personajes/src/index.ts"],
       "@juegosemi/render-pixi": ["./packages/render-pixi/src/index.ts"],
       "@juegosemi/ui": ["./packages/ui/src/index.ts"],

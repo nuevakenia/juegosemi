@@ -24,6 +24,7 @@ const RAIZ = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const COMBO = [
   { app: 'apps/estudio', salida: 'dist', url: '/' },
   { app: 'apps/juego-autos', salida: 'dist/juegos/autos', url: '/juegos/autos/' },
+  { app: 'apps/juego-gestos', salida: 'dist/juegos/gestos', url: '/juegos/gestos/' },
   { app: 'apps/taller', salida: 'dist/taller', url: '/taller/' },
 ];
 

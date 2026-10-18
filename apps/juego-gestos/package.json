@@ -1,0 +1,14 @@
+{
+  "name": "@juegosemi/juego-gestos",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Juego de gestos (QTE): machacar el botón, inflar el globo, girar la manivela y pasar la palanca. Prueba el reconocedor de gestos en el navegador, con el mouse o el dedo",
+  "dependencies": {
+    "@juegosemi/adaptadores-web": "*",
+    "@juegosemi/gestos": "*",
+    "@juegosemi/logica": "*",
+    "@juegosemi/puertos": "*",
+    "@juegosemi/ui": "*"
+  }
+}

@@ -10,4 +10,9 @@
 export { crearVideoHtml, type OpcionesVideoHtml } from './video-html.ts';
 export { crearAudioWeb, type AudioWeb } from './audio-webaudio.ts';
 export { crearEntradaTactil, type OpcionesEntradaTactil } from './entrada-tactil.ts';
+export {
+  crearGestosTactiles,
+  type GestosTactiles,
+  type OpcionesGestosTactiles,
+} from './gestos.ts';
 export { crearAlmacenamientoLocal, crearReloj, crearPantalla, crearPlataforma } from './plataforma.ts';

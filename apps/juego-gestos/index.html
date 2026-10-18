@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Los gestos</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --fondo: #0d1117;
+    --superficie: #161b22;
+    --borde: #30363d;
+    --texto: #e6edf3;
+    --texto-suave: #9fb0c5;
+    --primario: #3fb950;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; height: 100%; overflow: hidden;
+    background: var(--fondo); color: var(--texto);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  #marco { position: fixed; inset: 0; display: flex; flex-direction: column; }
+
+  #cabecera {
+    flex: 0 0 auto; display: flex; align-items: center; gap: 16px;
+    padding: 12px 20px; background: var(--superficie);
+    border-bottom: 2px solid var(--borde);
+  }
+  #pictograma { font-size: clamp(34px, 6vw, 60px); line-height: 1; }
+  #titulo { font-size: clamp(22px, 4vw, 40px); font-weight: 800; margin: 0; }
+  #ayuda { font-size: clamp(16px, 2.4vw, 24px); color: var(--texto-suave); margin: 4px 0 0; }
+
+  #escenario {
+    flex: 1 1 auto; position: relative; min-height: 0;
+    display: grid; place-items: center; text-align: center;
+    background:
+      radial-gradient(circle at 50% 45%, rgba(63,185,80,0.12), transparent 55%),
+      var(--fondo);
+    font-size: clamp(18px, 3vw, 30px); color: var(--texto-suave);
+    touch-action: none; cursor: pointer; user-select: none;
+  }
+  #escenario .pista { max-width: 28ch; padding: 0 16px; }
+
+  #panel {
+    flex: 0 0 auto; display: flex; align-items: center; gap: 16px;
+    padding: 14px 20px 20px; background: var(--superficie);
+    border-top: 2px solid var(--borde);
+  }
+  #barra { flex: 1 1 auto; min-width: 0; }
+  #estado {
+    flex: 0 0 auto; min-width: 5ch; text-align: center;
+    font-size: clamp(20px, 3vw, 32px); font-weight: 800; color: var(--primario);
+  }
+
+  /* Estilos de la barra de @juegosemi/ui (las apps traen su propio CSS, como el taller). */
+  .js-barra { display: flex; flex-direction: column; gap: 0.5rem; width: 100%; }
+  .js-barra__etiqueta { margin: 0; font-size: clamp(16px, 2.2vw, 22px); font-weight: 700; color: var(--texto); }
+  .js-barra__pista {
+    position: relative; overflow: hidden; height: 2.5rem;
+    border: 0.25rem solid var(--borde); border-radius: 1.5rem; background: var(--fondo);
+  }
+  .js-barra__relleno {
+    height: 100%; width: 0%; border-radius: 1rem; background: var(--primario);
+    transition: width 90ms linear;
+  }
+  @media (prefers-reduced-motion: reduce) { .js-barra__relleno { transition: none; } }
+
+  #cartel {
+    position: fixed; inset: 0; display: none; place-items: center;
+    background: rgba(6, 10, 16, 0.88); z-index: 20; padding: 24px;
+  }
+  #cartel.visible { display: grid; }
+  #cartel .caja { text-align: center; max-width: 620px; }
+  #cartel h1 { font-size: clamp(28px, 6vw, 56px); margin: 0 0 12px; }
+  #cartel p { font-size: clamp(18px, 3vw, 26px); color: var(--texto-suave); margin: 0 0 24px; }
+  #otra-vez {
+    font-size: clamp(22px, 4vw, 34px); font-weight: 800; padding: 18px 34px;
+    border: 0; border-radius: 16px; background: #238636; color: #fff;
+  }
+  #otra-vez:active { transform: scale(0.97); }
+</style>
+</head>
+<body>
+<div id="marco">
+  <header id="cabecera">
+    <span id="pictograma" aria-hidden="true"></span>
+    <div>
+      <h1 id="titulo">Los gestos</h1>
+      <p id="ayuda" role="status" aria-live="polite">Preparando el primer gesto…</p>
+    </div>
+  </header>
+
+  <!-- El escenario es el que recibe el dedo (o el mouse). Sin texto adentro que estorbe. -->
+  <div id="escenario" aria-label="Zona para hacer los gestos">
+    <span class="pista">Hacé el gesto en esta pantalla. Nada se pierde si no sale: probá otra vez.</span>
+  </div>
+
+  <footer id="panel">
+    <div id="barra"></div>
+    <div id="estado" aria-live="polite"></div>
+  </footer>
+</div>
+
+<div id="cartel">
+  <div class="caja">
+    <h1>¡Muy bien!</h1>
+    <p id="cartel-texto">Hiciste los cuatro gestos.</p>
+    <button id="otra-vez">Jugar otra vez</button>
+  </div>
+</div>
+
+<script type="module" src="./main.js"></script>
+</body>
+</html>

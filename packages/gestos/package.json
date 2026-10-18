@@ -1,0 +1,13 @@
+{
+  "name": "@juegosemi/gestos",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Reconocedor de gestos tipo QTE (toque repetido, mantener, circulo, direccion): puro y sin navegador, recibe los eventos de la entrada tactil y avisa cuando el gesto pedido se completa",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@juegosemi/puertos": "*"
+  }
+}
