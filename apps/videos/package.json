@@ -1,0 +1,12 @@
+{
+  "name": "@juegosemi/videos",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Lector de videos: la galeria de videos de la familia con tarjetas grandes, reproduccion a pantalla completa y aviso claro cuando un video no se puede ver en esta pantalla. Todo local, viaja en el APK",
+  "dependencies": {
+    "@juegosemi/adaptadores-web": "*",
+    "@juegosemi/puertos": "*",
+    "@juegosemi/ui": "*"
+  }
+}

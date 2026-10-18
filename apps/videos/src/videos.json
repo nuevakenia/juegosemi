@@ -1,0 +1,5 @@
+[
+  { "id": "casa-de-la-tia", "titulo": "La casa de la tía", "archivo": "casa-de-la-tia.mp4" },
+  { "id": "video-de-la-prima", "titulo": "El video de la prima", "archivo": "video-de-la-prima.mp4" },
+  { "id": "video-del-verano", "titulo": "El video del verano", "archivo": "video-no-soportado.mp4" }
+]

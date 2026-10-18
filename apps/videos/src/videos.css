@@ -1,0 +1,89 @@
+/* Estilos propios del lector de videos.
+ *
+ * Lo grande (el armazón de pantalla, las tarjetas y los botones de 88px) lo pone
+ * `@juegosemi/ui/estilos.css`, que se importa desde main.ts y viaja en el mismo
+ * `main.css`. Acá va SÓLO lo de esta pantalla: la grilla de videos, el marco de
+ * la miniatura, el aviso y el botón de volver por encima del video.
+ */
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background-color: var(--js-color-fondo);
+}
+
+/* ---------- La galería ---------- */
+
+.js-galeria {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--js-espacio-grande);
+}
+
+@media (min-width: 40rem) {
+  .js-galeria {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 64rem) {
+  .js-galeria {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.js-video-tarjeta {
+  padding: var(--js-espacio);
+  gap: var(--js-espacio);
+  min-height: calc(var(--js-toque-minimo) * 3);
+}
+
+/* El marco de la miniatura: siempre reservado, para que las tarjetas no bailen */
+.js-video-tarjeta__marco {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--js-radio-chico);
+  background-color: var(--js-color-fondo);
+}
+
+.js-video-tarjeta__cuadro {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.js-galeria__vacia {
+  margin: 0;
+  font-size: var(--js-texto-cuerpo);
+  color: var(--js-color-texto-suave);
+}
+
+/* ---------- El aviso "no se puede ver acá" (sin cara de error) ---------- */
+
+.js-aviso__texto {
+  margin: 0;
+  font-size: var(--js-texto-cuerpo);
+  color: var(--js-color-texto-suave);
+}
+
+.js-aviso__boton {
+  width: 100%;
+  align-self: stretch;
+}
+
+/* ---------- El video a pantalla completa ---------- */
+
+/* El botón de volver va POR ENCIMA del <video> a pantalla completa: el adaptador
+ * lo deja en z-index 50 y este botón va en 60. */
+.js-boton--encima {
+  position: fixed;
+  top: var(--js-espacio);
+  left: var(--js-espacio);
+  z-index: 60;
+  max-width: calc(100% - var(--js-espacio) * 2);
+}

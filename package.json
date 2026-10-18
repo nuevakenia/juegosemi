@@ -20,10 +20,12 @@
     "build:juego-autos": "node tools/build.mjs apps/juego-autos",
     "build:juego-gestos": "node tools/build.mjs apps/juego-gestos",
     "build:episodio-viaje": "node tools/build.mjs apps/episodio-viaje",
+    "build:videos": "node tools/build.mjs apps/videos",
     "dev:estudio": "vite --config apps/estudio/vite.config.ts",
     "dev:juego-autos": "vite --config apps/juego-autos/vite.config.ts",
     "dev:juego-gestos": "node tools/dev.mjs apps/juego-gestos",
     "dev:episodio-viaje": "node tools/dev.mjs apps/episodio-viaje",
+    "dev:videos": "node tools/dev.mjs apps/videos",
     "apk": "bash tools/compilar-apk.sh",
     "verificar": "bash tools/verificar.sh"
   },

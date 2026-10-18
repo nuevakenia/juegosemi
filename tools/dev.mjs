@@ -27,6 +27,7 @@ const COMBO = [
   { app: 'apps/juego-gestos', salida: 'dist/juegos/gestos', url: '/juegos/gestos/' },
   { app: 'apps/episodio-viaje', salida: 'dist/juegos/viaje', url: '/juegos/viaje/' },
   { app: 'apps/taller', salida: 'dist/taller', url: '/taller/' },
+  { app: 'apps/videos', salida: 'dist/videos', url: '/videos/' },
 ];
 
 const args = process.argv.slice(2);
@@ -84,7 +85,7 @@ if (objetivo === 'combo') {
 } else {
   const app = objetivo.replace(/\/$/, '');
   if (!existsSync(join(RAIZ, app, 'src/main.ts'))) {
-    console.error(`No existe ${app}/src/main.ts. Probá con: combo | apps/estudio | apps/juego-autos | apps/juego-gestos | apps/episodio-viaje | apps/taller`);
+    console.error(`No existe ${app}/src/main.ts. Probá con: combo | apps/estudio | apps/juego-autos | apps/juego-gestos | apps/episodio-viaje | apps/taller | apps/videos`);
     process.exit(1);
   }
   const ctx = await contextoDe(app, join(app, 'dist'));

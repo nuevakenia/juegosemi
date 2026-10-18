@@ -41,7 +41,7 @@ const ENTRADAS: Entrada[] = [
     titulo: 'Videos',
     detalle: 'Los videos de la familia, sin publicidad.',
     ruta: './videos/index.html',
-    disponible: false,
+    disponible: true,
   },
   {
     id: 'taller',
