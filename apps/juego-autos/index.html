@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Los autos de la familia</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; overflow: hidden;
+    background: #0d1117; color: #e6edf3;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  #marco { position: fixed; inset: 0; display: flex; flex-direction: column; }
+  #aviso {
+    flex: 0 0 auto; min-height: 72px; padding: 10px 16px;
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    font-size: clamp(20px, 3.4vw, 40px); font-weight: 800; letter-spacing: 0.2px;
+    background: #161b22; border-bottom: 2px solid #30363d; transition: background 200ms;
+  }
+  #aviso.festejo { background: #12492b; border-bottom-color: #3fb950; }
+  #juego { flex: 1 1 auto; position: relative; min-height: 0; touch-action: none; }
+  #juego canvas { display: block; width: 100%; height: 100%; }
+  #cartel {
+    position: fixed; inset: 0; display: none; place-items: center;
+    background: rgba(6, 10, 16, 0.86); z-index: 20; padding: 24px;
+  }
+  #cartel.visible { display: grid; }
+  #cartel .caja { text-align: center; max-width: 620px; }
+  #cartel h1 { font-size: clamp(28px, 6vw, 56px); margin: 0 0 12px; }
+  #cartel p { font-size: clamp(18px, 3vw, 26px); color: #9fb0c5; margin: 0 0 24px; }
+  #otra-vez {
+    font-size: clamp(22px, 4vw, 34px); font-weight: 800; padding: 18px 34px;
+    border: 0; border-radius: 16px; background: #238636; color: #fff;
+  }
+  #otra-vez:active { transform: scale(0.97); }
+</style>
+</head>
+<body>
+<div id="marco">
+  <div id="aviso" role="status" aria-live="polite">Llevá a cada persona hasta su auto</div>
+  <div id="juego" aria-label="Tablero del juego"></div>
+</div>
+<div id="cartel">
+  <div class="caja">
+    <h1 id="cartel-titulo">¡Muy bien!</h1>
+    <p id="cartel-texto"></p>
+    <button id="otra-vez">Jugar otra vez</button>
+  </div>
+</div>
+<script type="module" src="./main.js"></script>
+</body>
+</html>

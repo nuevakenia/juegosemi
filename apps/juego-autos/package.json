@@ -1,0 +1,15 @@
+{
+  "name": "@juegosemi/juego-autos",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Primer juego: arrastrar cada persona hasta su auto. Acierto con frase, sonido y juice; sin feedback negativo",
+  "dependencies": {
+    "@juegosemi/adaptadores-web": "*",
+    "@juegosemi/contenido": "*",
+    "@juegosemi/motor": "*",
+    "@juegosemi/personajes": "*",
+    "@juegosemi/render-pixi": "*",
+    "@juegosemi/ui": "*"
+  }
+}
