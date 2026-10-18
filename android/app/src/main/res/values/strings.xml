@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Juegos de Emiliano</string>
+    <string name="title_activity_main">Juegos de Emiliano</string>
+    <string name="package_name">cl.nuevakenia.juegosemi</string>
+    <string name="custom_url_scheme">cl.nuevakenia.juegosemi</string>
+</resources>
