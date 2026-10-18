@@ -28,6 +28,14 @@ const ENTRADAS: Entrada[] = [
     disponible: true,
   },
   {
+    id: 'viaje',
+    emoji: '🧳',
+    titulo: 'Vamos a la casa de la tía',
+    detalle: 'Subí las maletas, girá la manivela y llegá.',
+    ruta: './juegos/viaje/index.html',
+    disponible: true,
+  },
+  {
     id: 'videos',
     emoji: '🎬',
     titulo: 'Videos',

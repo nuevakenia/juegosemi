@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Vamos a la casa de la tía</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --fondo: #0d1117;
+    --superficie: #161b22;
+    --borde: #30363d;
+    --texto: #e6edf3;
+    --texto-suave: #9fb0c5;
+    --primario: #3fb950;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; height: 100%; overflow: hidden;
+    background: var(--fondo); color: var(--texto);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  #marco { position: fixed; inset: 0; display: flex; flex-direction: column; }
+
+  #aviso {
+    flex: 0 0 auto; min-height: 64px; padding: 10px 16px;
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    font-size: clamp(20px, 3.4vw, 40px); font-weight: 800; letter-spacing: 0.2px;
+    background: var(--superficie); border-bottom: 2px solid var(--borde);
+    transition: background 200ms;
+  }
+  #aviso.festejo { background: #12492b; border-bottom-color: var(--primario); }
+
+  #juego {
+    flex: 1 1 auto; position: relative; min-height: 0;
+    touch-action: none; user-select: none;
+  }
+  #juego canvas { display: block; width: 100%; height: 100%; }
+
+  #panel {
+    flex: 0 0 auto; display: none; align-items: center; gap: 16px;
+    padding: 14px 20px 20px; background: var(--superficie);
+    border-top: 2px solid var(--borde);
+  }
+  #panel.visible { display: flex; }
+  #barra { flex: 1 1 auto; min-width: 0; }
+
+  /* Estilos de la barra de @juegosemi/ui (cada app trae su propio CSS). */
+  .js-barra { display: flex; flex-direction: column; gap: 0.5rem; width: 100%; }
+  .js-barra__etiqueta { margin: 0; font-size: clamp(16px, 2.2vw, 22px); font-weight: 700; color: var(--texto); }
+  .js-barra__pista {
+    position: relative; overflow: hidden; height: 2.4rem;
+    border: 0.25rem solid var(--borde); border-radius: 1.5rem; background: var(--fondo);
+  }
+  .js-barra__relleno {
+    height: 100%; width: 0%; border-radius: 1rem; background: var(--primario);
+    transition: width 90ms linear;
+  }
+  @media (prefers-reduced-motion: reduce) { .js-barra__relleno { transition: none; } }
+
+  #cartel {
+    position: fixed; inset: 0; display: none; place-items: center;
+    background: rgba(6, 10, 16, 0.92); z-index: 60; padding: 24px;
+  }
+  #cartel.visible { display: grid; }
+  #cartel .caja { text-align: center; max-width: 640px; }
+  #cartel h1 { font-size: clamp(30px, 7vw, 64px); margin: 0 0 12px; }
+  #cartel .carita { font-size: clamp(46px, 10vw, 90px); line-height: 1; }
+  #cartel p { font-size: clamp(18px, 3vw, 28px); color: var(--texto-suave); margin: 12px 0 24px; }
+  #otra-vez {
+    font-size: clamp(22px, 4vw, 34px); font-weight: 800; padding: 18px 34px;
+    border: 0; border-radius: 16px; background: #238636; color: #fff;
+  }
+  #otra-vez:active { transform: scale(0.97); }
+</style>
+</head>
+<body>
+<div id="marco">
+  <div id="aviso" role="status" aria-live="polite">Llevá las tres maletas hasta el auto</div>
+  <div id="juego" aria-label="El camino a la casa de la tía"></div>
+  <footer id="panel">
+    <div id="barra"></div>
+  </footer>
+</div>
+
+<div id="cartel">
+  <div class="caja">
+    <div class="carita" aria-hidden="true">&#127968;</div>
+    <h1>¡Llegamos!</h1>
+    <p id="cartel-texto">Llegamos a la casa de la tía.</p>
+    <button id="otra-vez">Jugar otra vez</button>
+  </div>
+</div>
+
+<script type="module" src="./main.js"></script>
+</body>
+</html>

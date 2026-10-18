@@ -1,0 +1,16 @@
+{
+  "name": "@juegosemi/episodio-viaje",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Episodio piloto: el viaje a la casa de la tía. Subir las tres maletas, girar la manivela 3 veces y llegar a la casa, donde sale el video del día. Se juega de punta a punta desde los datos del nivel",
+  "dependencies": {
+    "@juegosemi/adaptadores-web": "*",
+    "@juegosemi/gestos": "*",
+    "@juegosemi/logica": "*",
+    "@juegosemi/motor": "*",
+    "@juegosemi/puertos": "*",
+    "@juegosemi/render-pixi": "*",
+    "@juegosemi/ui": "*"
+  }
+}
