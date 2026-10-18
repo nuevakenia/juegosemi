@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "paths": {
+      "@juegosemi/puertos": ["./packages/puertos/src/index.ts"],
+      "@juegosemi/contenido": ["./packages/contenido/src/index.ts"],
+      "@juegosemi/motor": ["./packages/motor/src/index.ts"],
+      "@juegosemi/personajes": ["./packages/personajes/src/index.ts"],
+      "@juegosemi/render-pixi": ["./packages/render-pixi/src/index.ts"],
+      "@juegosemi/ui": ["./packages/ui/src/index.ts"],
+      "@juegosemi/adaptadores-web": ["./packages/adaptadores-web/src/index.ts"]
+    }
+  },
+  "include": ["packages/*/src/**/*.ts", "apps/*/src/**/*.ts", "tools/**/*.mjs"]
+}

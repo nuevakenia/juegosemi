@@ -1,0 +1,38 @@
+{
+  "name": "juegosemi",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Juegos y material audiovisual educativo personalizado para Emiliano (tablet Huawei sin servicios de Google, y celulares Android)",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc -b --pretty false",
+    "build:estudio": "node tools/build.mjs apps/estudio",
+    "build:juego-autos": "node tools/build.mjs apps/juego-autos",
+    "dev:estudio": "vite --config apps/estudio/vite.config.ts",
+    "dev:juego-autos": "vite --config apps/juego-autos/vite.config.ts",
+    "apk": "bash tools/compilar-apk.sh",
+    "verificar": "bash tools/verificar.sh"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.5.3",
+    "@types/node": "^26.6.5",
+    "esbuild": "^0.28.0",
+    "jsdom": "^27.0.0",
+    "typescript": "7.0.2",
+    "vitest": "5.0.5"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/core": "^8.5.3"
+  }
+}

@@ -1,68 +1,31 @@
-# Prerequisites
-*.d
+# Node / TypeScript
+node_modules/
+dist/
+*.tsbuildinfo
+.vite/
+coverage/
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# Android / Capacitor
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.idea/
+android/app/src/main/assets/public/
 
-# Precompiled Headers
-*.gch
-*.pch
+# Artefactos
+*.apk
+*.aab
+*.jks
+*.keystore
 
-# Linker files
-*.ilk
+# Entorno
+.env
+.env.*
+!.env.example
 
-# Debugger Files
-*.pdb
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-*.so.*
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
-
-# Build directories
-build/
-Build/
-build-*/
-
-# CMake generated files
-CMakeFiles/
-CMakeCache.txt
-cmake_install.cmake
-Makefile
-install_manifest.txt
-compile_commands.json
-
-# Temporary files
-*.tmp
-*.log
-*.bak
-*.swp
-
-# vcpkg
-vcpkg_installed/
-
-# debug information files
-*.dwo
-
-# test output & cache
+# Caches del sistema / editor
 Testing/
 .cache/
+.DS_Store
+*.swp
