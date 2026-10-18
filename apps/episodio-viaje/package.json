@@ -10,6 +10,7 @@
     "@juegosemi/logica": "*",
     "@juegosemi/motor": "*",
     "@juegosemi/puertos": "*",
+    "@juegosemi/recompensas": "*",
     "@juegosemi/render-pixi": "*",
     "@juegosemi/ui": "*"
   }

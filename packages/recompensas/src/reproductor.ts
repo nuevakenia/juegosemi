@@ -13,6 +13,9 @@
  *      donde corresponda: terminó, lo cerraron, se quedó quieto, o pasó el tope.
  *
  * El tope es la red de seguridad: NADA deja a Emiliano esperando para siempre.
+ *
+ * (Vive acá, en `@juegosemi/recompensas`, para que el lector de videos y el
+ * premio del episodio usen EL MISMO reproductor y no haya dos.)
  */
 import type { PuertoVideo, ResultadoVideo } from '@juegosemi/puertos';
 

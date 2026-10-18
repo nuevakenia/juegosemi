@@ -32,10 +32,26 @@ import {
   crearVideoHtml,
 } from '@juegosemi/adaptadores-web';
 import { crearBarraProgreso } from '@juegosemi/ui';
+import {
+  VARIABLE_PREMIO_DEL_DIA,
+  conPremioDelDia,
+  crearAlmacenRecompensas,
+  crearSelectorDeRecompensas,
+  elegirPremioDelDia,
+  premioDelDia,
+  recompensaPorId,
+  recompensasDeEpisodio,
+  reproducirRecompensa,
+  respaldosDeVideo,
+  urlDeRecompensa,
+  type Recompensa,
+  type ReproduccionRecompensa,
+} from '@juegosemi/recompensas';
+import '@juegosemi/ui/estilos.css';
+import '@juegosemi/recompensas/estilos.css';
 import { NIVEL } from './nivel.ts';
 import { crearEpisodio, type Episodio } from './episodio.ts';
 import { centroEnZona } from './escenario.ts';
-import { crearPuertoVideo, premioDelNivel, urlDeVideo } from './premio.ts';
 import { faseDelViaje, GESTO_MANIVELA, OBJETIVO_MANIVELA, type FaseViaje } from './viaje.ts';
 
 /** Un efecto de pantalla en curso (por ahora, sólo "la maleta vuelve a su lugar"). */
@@ -69,8 +85,16 @@ async function principal(): Promise<void> {
   const cartel = exigir<HTMLDivElement>('cartel');
   const cartelTexto = exigir<HTMLParagraphElement>('cartel-texto');
 
+  // ── el premio del día, ANTES de jugar ──────────────────────────────────────
+  // El catálogo vive en datos y el elegido queda guardado; con eso se arma el
+  // nivel, que ya paga la recompensa leyendo `$premio-del-dia`. Cambiar el premio
+  // es tocar una tarjeta del selector, nunca el código.
+  const almacen = crearAlmacenRecompensas();
+  let premioActual: Recompensa = premioDelDia(almacen, NIVEL.id);
+  const nivel = conPremioDelDia(NIVEL, premioActual);
+
   // ── el nivel, revisado antes de jugar ──────────────────────────────────────
-  const revision = validarNivel(NIVEL);
+  const revision = validarNivel(nivel);
   if (!revision.ok) {
     aviso.textContent = `El nivel tiene errores: ${revision.errores.join(' · ')}`;
     return;
@@ -81,9 +105,9 @@ async function principal(): Promise<void> {
   const audio = crearAudioWeb();
   const pantalla = crearPantalla(contenedor.clientWidth || 800, contenedor.clientHeight || 600);
 
-  // El puerto de video traduce el id lógico del premio a una ruta real y, como
-  // pide el proyecto, verifica FRAMES: si el WebView no decodifica, devuelve `ok:false`.
-  const video = crearPuertoVideo(crearVideoHtml());
+  // El puerto de video de verdad (mide FRAMES: si el WebView no decodifica el
+  // códec, devuelve `ok:false` y el premio cae al respaldo del catálogo).
+  const videoHtml = crearVideoHtml();
 
   const ancho = contenedor.clientWidth || 800;
   const alto = contenedor.clientHeight || 600;
@@ -136,77 +160,55 @@ async function principal(): Promise<void> {
   // ── el cartel grande del final ─────────────────────────────────────────────
   function mostrarCartel(): void {
     const maletas = episodio.maletasEnElAuto();
-    cartelTexto.textContent = `Subiste ${maletas} maletas, giraste la manivela y manejaste hasta la casa de la tía.`;
+    const resumen = `Subiste ${maletas} maletas, giraste la manivela y manejaste hasta la casa de la tía.`;
+    // Un premio de tipo `frase` no tiene dónde verse: se muestra acá, grande.
+    cartelTexto.textContent = fraseDelPremio === null ? resumen : `${fraseDelPremio} ${resumen}`;
     cartel.classList.add('visible');
   }
 
-  /**
-   * Espera a que termine el video del premio y recién ahí levanta el cartel.
-   *
-   * No se cree de un solo evento: revisa cada medio segundo el estado real del
-   * `<video>` y cierra por donde corresponda (terminó, falló, nunca arrancó, no
-   * decodificó frames, o pasó el tope). El cartel SIEMPRE aparece: un premio que
-   * no se puede ver no puede dejar al niño esperando para siempre.
-   */
-  function esperarFinDelVideo(alTerminar: () => void): void {
-    let cerrado = false;
-    let quieto = 0;
-    let sinFrames = 0;
-    let transcurrido = 0;
-    const cerrar = (): void => {
-      if (cerrado) return;
-      cerrado = true;
-      video.detener();
-      alTerminar();
-    };
-    const revisar = (): void => {
-      if (cerrado) return;
-      transcurrido += 500;
-      const v = document.querySelector('video');
-      if (v === null) return cerrar(); // ya no hay video: lo cerró alguien
-      if (v.ended || v.error !== null) return cerrar();
+  // ── el premio del día (video, frase o sonido) ──────────────────────────────
+  // Lo elige el NIVEL con `reproducir_video($premio-del-dia)`. Acá se ve y, si no
+  // se puede ver en esta pantalla, se avisa en castellano claro y se prueba el
+  // respaldo del catálogo (el mismo `verVideo` del lector de videos: no hay un
+  // segundo reproductor). Nunca un rectángulo negro ni una pantalla muda.
+  let reproduccionPremio: ReproduccionRecompensa | null = null;
+  let huboPremio = false;
+  // El texto de un premio de tipo `frase`, para mostrarlo en el cartel del final.
+  let fraseDelPremio: string | null = null;
 
-      const duracion = v.duration;
-      if (Number.isFinite(duracion) && duracion > 0 && v.currentTime >= duracion - 0.25) return cerrar();
-
-      // El navegador no dejó reproducir (autoplay bloqueado): no se hace esperar.
-      if (v.paused && v.currentTime === 0 && v.readyState >= 3) {
-        quieto += 500;
-        if (quieto >= 3000) return cerrar();
-      } else {
-        quieto = 0;
-      }
-
-      // Arrancó pero no decodifica (el caso del H.265 en el WebView viejo).
-      if (v.videoWidth === 0) {
-        sinFrames += 500;
-        if (sinFrames >= 8000) return cerrar();
-      } else {
-        sinFrames = 0;
-      }
-
-      if (transcurrido >= 60000) return cerrar(); // tope: el cartel sale igual
-      window.setTimeout(revisar, 500);
-    };
-    window.setTimeout(revisar, 500);
+  function reproducirPremioDelDia(idDelNivel: string): void {
+    const recompensa = recompensaPorId(idDelNivel) ?? premioActual;
+    premioActual = recompensa;
+    fraseDelPremio = recompensa.tipo === 'frase' ? (recompensa.texto ?? recompensa.titulo) : null;
+    if (reproduccionPremio !== null) reproduccionPremio.cancelar();
+    reproduccionPremio = reproducirRecompensa({
+      puerto: videoHtml,
+      recompensa,
+      respaldos: respaldosDeVideo(recompensa, NIVEL.id),
+      alAvisar: (frase) => {
+        aviso.textContent = frase;
+      },
+      alTerminar: () => mostrarCartel(),
+    });
   }
 
   function festejarLlegada(): void {
     aviso.textContent = '¡Llegamos a la casa de la tía!';
     aviso.classList.add('festejo');
     tocarSonido('festejo');
-    // El video ya está reproduciéndose (la recompensa del nivel corre antes que
-    // el festejo): el cartel sale cuando termina.
-    esperarFinDelVideo(mostrarCartel);
+    // El premio ya está corriendo (la recompensa del nivel va antes que el
+    // festejo): el cartel sale cuando termina. Si por lo que sea no arrancó, el
+    // cartel sale igual: nadie se queda esperando para siempre.
+    if (!huboPremio) mostrarCartel();
   }
 
   // ── el episodio (escenario + puente + arrastre) ────────────────────────────
   const episodio: Episodio = crearEpisodio({
-    nivel: NIVEL,
+    nivel,
     ancho,
     alto,
-    // Sin puerto de audio: `sonar(...)` cae en `alEfecto` y ahí ponemos el tono.
-    video,
+    // Sin puerto de audio NI de video: `sonar(...)` y `reproducir_video(...)` caen
+    // en `alEfecto`, y ahí el premio se maneja con respaldo (ver arriba).
     avisos: {
       alDecir: (_entidad, frase) => {
         aviso.textContent = frase;
@@ -217,11 +219,39 @@ async function principal(): Promise<void> {
       alCelebrar: () => festejarLlegada(),
       alEfecto: (accion: AccionResuelta) => {
         if (accion.nombre === 'sonar') tocarSonido(String(accion.args['sonido'] ?? ''));
+        if (accion.nombre === 'reproducir_video') {
+          huboPremio = true;
+          reproducirPremioDelDia(String(accion.args['video'] ?? ''));
+        }
       },
     },
     alSubirMaleta: (entidad) => festejarMaleta(entidad),
     alVolverMaleta: (entidad) => volverALugar(entidad),
   });
+
+  // ── el selector de premios (pieza de @juegosemi/recompensas) ───────────────
+  // Botón grande "Cambiar el premio": abre las tarjetas y, al tocar una, la
+  // guarda y la usa el juego en curso. Sin escribir código. Es la misma pieza
+  // que después va a usar el editor de niveles.
+  function cambiarPremio(recompensa: Recompensa): void {
+    premioActual = recompensa;
+    elegirPremioDelDia(almacen, recompensa);
+    // El mundo del juego en curso también: así el nivel paga el nuevo premio.
+    episodio.puente.logica.mundo.marcar(VARIABLE_PREMIO_DEL_DIA, recompensa.id);
+    aviso.textContent = `Listo: el premio del día ahora es "${recompensa.titulo}".`;
+    console.info('juegosemi: premio cambiado', { premio: recompensa.id, titulo: recompensa.titulo });
+  }
+
+  const contenedorPremio = document.getElementById('premio');
+  if (contenedorPremio) {
+    contenedorPremio.appendChild(
+      crearSelectorDeRecompensas({
+        recompensas: recompensasDeEpisodio(NIVEL.id),
+        elegidoId: premioActual.id,
+        alElegir: (recompensa) => cambiarPremio(recompensa),
+      }).elemento,
+    );
+  }
 
   // ── los gestos (el reconocedor del paquete gestos, vía adaptadores-web) ────
   const gestos = crearGestosTactiles({
@@ -346,8 +376,10 @@ async function principal(): Promise<void> {
     nucleos: info.nucleos,
   });
   console.info('juegosemi: episodio', {
-    premio: premioDelNivel(NIVEL),
-    url: urlDeVideo(premioDelNivel(NIVEL)),
+    premio: premioActual.id,
+    titulo: premioActual.titulo,
+    url: urlDeRecompensa(premioActual),
+    premios: recompensasDeEpisodio(NIVEL.id).length,
     maletas: episodio.escenario.piezas.maletas.length,
     zona: episodio.zonaCasa.nombre,
     gesto: `${GESTO_MANIVELA} sobre ${OBJETIVO_MANIVELA}`,
@@ -361,7 +393,16 @@ async function principal(): Promise<void> {
   (window as unknown as Record<string, unknown>)['juegosemi'] = {
     episodio,
     gestos,
-    nivel: NIVEL,
+    nivel,
+    /** El premio del día que está puesto ahora. */
+    premio: () => premioActual,
+    /** Todo el catálogo de premios del episodio. */
+    premios: recompensasDeEpisodio(NIVEL.id),
+    /** Cambia el premio del día por su id (lo mismo que hace el selector). */
+    elegirPremio: (id: string): void => {
+      const recompensa = recompensaPorId(id);
+      if (recompensa !== null) cambiarPremio(recompensa);
+    },
     ayuda: {
       /** Arrastra una maleta hasta el auto (simulando el dedo). */
       arrastrarMaleta(maletaId: string, alAuto = true): void {

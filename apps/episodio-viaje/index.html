@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <title>Vamos a la casa de la tía</title>
+<!-- El empaquetador junta acá el CSS del paquete ui, el de premios y el propio. -->
+<link rel="stylesheet" href="./main.css">
 <style>
   :root {
     color-scheme: dark;
@@ -72,6 +74,14 @@
     border: 0; border-radius: 16px; background: #238636; color: #fff;
   }
   #otra-vez:active { transform: scale(0.97); }
+
+  /* El botón de premios: una pieza de @juegosemi/recompensas, anclada abajo a la
+   * derecha. Es el control del grande (cambiar el premio del día), no del juego. */
+  #premio {
+    position: fixed; right: 12px; bottom: 12px; z-index: 45;
+    max-width: min(64vw, 360px);
+  }
+  #premio .js-selector__abrir { width: 100%; }
 </style>
 </head>
 <body>
@@ -82,6 +92,8 @@
     <div id="barra"></div>
   </footer>
 </div>
+
+<div id="premio"></div>
 
 <div id="cartel">
   <div class="caja">

@@ -7,6 +7,7 @@
   "dependencies": {
     "@juegosemi/adaptadores-web": "*",
     "@juegosemi/puertos": "*",
+    "@juegosemi/recompensas": "*",
     "@juegosemi/ui": "*"
   }
 }

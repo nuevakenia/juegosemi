@@ -7,6 +7,9 @@
  *   - si dice que SÍ → se mira el <video> de verdad hasta que termina;
  *   - pase lo que pase (video que se cuelga, promesa que revienta, botón de
  *     volver) → SIEMPRE se sale por algún lado. Nunca una pantalla muda.
+ *
+ * (Vive en `@juegosemi/recompensas` junto al reproductor que prueba: es el MISMO
+ * que usa el lector de videos y el premio del episodio.)
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { CodecVideo, OpcionesVideo, PuertoVideo, ResultadoVideo } from '@juegosemi/puertos';

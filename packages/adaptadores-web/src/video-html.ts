@@ -89,8 +89,19 @@ export function crearVideoHtml(opciones: OpcionesVideoHtml = {}): PuertoVideo {
       }
       try {
         await v.play();
-      } catch (e) {
-        return { ok: false, motivo: `el navegador no dejó reproducir: ${(e as Error).message}` };
+      } catch {
+        // El navegador puede negarse a arrancar CON SONIDO si no hubo un toque
+        // del usuario justo antes (NotAllowedError) — y el premio sale solo, sin
+        // toque en ese momento. No se pierde el video por eso: se reintenta sin
+        // sonido. Es preferible que Emiliano VEA el video a que le digamos que no
+        // se puede ver. En la tablet casi siempre hay toque previo (arrastrar las
+        // maletas, girar la manivela) y suena; si no, se ve igual.
+        v.muted = true;
+        try {
+          await v.play();
+        } catch (e) {
+          return { ok: false, motivo: `el navegador no dejó reproducir: ${(e as Error).message}` };
+        }
       }
       // Verificación de frames: el 'play' puede haber resuelto sin decodificar.
       const inicio = Date.now();

@@ -1,0 +1,7 @@
+[
+  { "id": "casa-de-la-tia", "episodio": "viaje-casa-tia", "tipo": "video", "titulo": "La casa de la tía", "archivo": "casa-de-la-tia.mp4" },
+  { "id": "video-de-la-prima", "episodio": "viaje-casa-tia", "tipo": "video", "titulo": "El video de la prima", "archivo": "video-de-la-prima.mp4" },
+  { "id": "video-del-final", "episodio": "viaje-casa-tia", "tipo": "video", "titulo": "El video del final (de prueba)", "archivo": "video-del-final.mp4" },
+  { "id": "felicitacion", "episodio": "viaje-casa-tia", "tipo": "frase", "titulo": "Una felicitación", "texto": "¡Lo hiciste increíble! Llegaste a la casa de la tía." },
+  { "id": "aplauso", "episodio": "viaje-casa-tia", "tipo": "sonido", "titulo": "Un aplauso de la familia", "archivo": "aplauso.mp3" }
+]

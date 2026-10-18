@@ -1,0 +1,17 @@
+{
+  "name": "@juegosemi/recompensas",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Los premios de los juegos como contenido configurable: catalogo en datos por episodio (video/frase/sonido), el premio del dia guardado y un selector grande para cambiarlo sin tocar codigo",
+  "exports": {
+    ".": "./src/index.ts",
+    "./estilos.css": "./src/recompensas.css"
+  },
+  "dependencies": {
+    "@juegosemi/adaptadores-web": "*",
+    "@juegosemi/logica": "*",
+    "@juegosemi/puertos": "*",
+    "@juegosemi/ui": "*"
+  }
+}

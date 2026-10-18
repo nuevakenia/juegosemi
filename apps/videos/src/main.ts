@@ -29,7 +29,7 @@ import {
 } from './estado.ts';
 import { crearGaleria, type Galeria } from './galeria.ts';
 import { sacarMiniatura } from './miniatura.ts';
-import { verVideo, type Reproduccion } from './reproductor.ts';
+import { verVideo, type Reproduccion } from '@juegosemi/recompensas';
 import '@juegosemi/ui/estilos.css';
 import './videos.css';
 
