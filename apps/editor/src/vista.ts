@@ -24,26 +24,33 @@ import {
   PISTA_DE_CATEGORIA,
   type Categoria,
 } from './categorias.ts';
-import type { NivelEnConstruccion, ReglaEditor } from './estado.ts';
+import type { NivelEnConstruccion, MisionEditor, ReglaEditor } from './estado.ts';
 import {
   agregarAccion,
   agregarReglaEnBlanco,
+  alternarRequiere,
   conCosa,
   conTitulo,
   elegirCuando,
+  elegirCumple,
+  idDesdeNombre,
   idLibre,
   idsDe,
   moverRegla,
+  moverRequiere,
   nombreDe,
+  ponerRecompensa,
   ponerValorAccion,
   ponerValorCuando,
+  ponerValorCumple,
   quitarAccion,
   quitarRegla,
   sinCosa,
   textoDe,
 } from './estado.ts';
-import { reglasCompletas, valoresPorDefectoCuando, valoresPorDefectoEntonces } from './construir.ts';
-import { fraseDeRegla } from './frases.ts';
+import { misionesCompletas, reglasCompletas, valoresPorDefectoCuando, valoresPorDefectoEntonces } from './construir.ts';
+import { fraseDeMision, fraseDeRegla } from './frases.ts';
+import { avisoDeCiclo, candidatasARequisito } from './misiones.ts';
 import {
   GESTOS,
   ENTIDAD_ACTUAL,
@@ -61,6 +68,12 @@ interface Abierto {
   paso: 'cuando' | 'quien' | 'entonces';
 }
 
+/** Qué paso de qué misión está abierto ahora (también de a uno). */
+interface AbiertoMision {
+  misionId: string;
+  paso: 'cumple' | 'datos' | 'antes' | 'premio';
+}
+
 export interface OpcionesEditor {
   nivel: NivelEnConstruccion;
   /** Se tocó "Probar": acá va la prueba en vivo (sólo se llama si el nivel cierra). */
@@ -76,6 +89,8 @@ export interface Editor {
   nivel(): NivelEnConstruccion;
   /** Aplica una operación de alto nivel y repinta. */
   actualizar(cambio: (nivel: NivelEnConstruccion) => NivelEnConstruccion): void;
+  /** Reemplaza el nivel entero (al abrir uno guardado o al importar un archivo). */
+  abrir(nivel: NivelEnConstruccion): void;
 }
 
 /** Los videos del catálogo de premios: son los que puede pedir `reproducir_video`. */
@@ -86,6 +101,7 @@ function videosDisponibles(): Recompensa[] {
 export function crearEditor(opciones: OpcionesEditor): Editor {
   let nivel = opciones.nivel;
   let abierto: Abierto | null = null;
+  let abiertoMision: AbiertoMision | null = null;
 
   const raiz = crearElemento('div', { clases: 'editor' });
 
@@ -459,6 +475,302 @@ export function crearEditor(opciones: OpcionesEditor): Editor {
     return panel;
   }
 
+  // ── Las misiones (prerrequisitos EN ORDEN y premio) ─────────────────────────
+
+  function abrirMision(misionId: string, paso: AbiertoMision['paso']): void {
+    if (abiertoMision !== null && abiertoMision.misionId === misionId && abiertoMision.paso === paso) {
+      abiertoMision = null;
+      pintar();
+      return;
+    }
+    abiertoMision = { misionId, paso };
+    pintar();
+  }
+
+  /** La pantalla de las misiones: la lista, el aviso de rueda y el "agregar". */
+  function pintarMisiones(): HTMLElement {
+    const panel = crearElemento('section', { clases: 'misiones' });
+    panel.appendChild(crearElemento('h2', { clases: 'misiones__titulo', texto: '🚩 Las misiones' }));
+    panel.appendChild(
+      crearElemento('p', {
+        clases: 'misiones__bajada',
+        texto: 'Qué hay que lograr, en qué orden y qué se gana. El juego termina cuando se cumplen todas.',
+      }),
+    );
+
+    const ciclo = avisoDeCiclo(nivel);
+    if (ciclo !== null) {
+      const avisoCiclo = crearElemento('div', { clases: 'aviso aviso--ciclo' });
+      avisoCiclo.setAttribute('role', 'status');
+      avisoCiclo.appendChild(
+        crearElemento('p', { clases: 'aviso__titulo', texto: 'El orden de las misiones se muerde la cola' }),
+      );
+      avisoCiclo.appendChild(crearElemento('p', { clases: 'misiones__ciclo', texto: ciclo }));
+      panel.appendChild(avisoCiclo);
+    }
+
+    const lista = crearElemento('div', { clases: 'misiones__lista' });
+    if (nivel.misiones.length === 0) {
+      lista.appendChild(
+        crearElemento('p', {
+          clases: 'misiones__vacio',
+          texto: 'Todavía no hay misiones. Escribí una abajo (por ejemplo, «subir las maletas»).',
+        }),
+      );
+    }
+    nivel.misiones.forEach((mision, i) => lista.appendChild(pintarMision(mision, i)));
+    panel.appendChild(lista);
+
+    const agregar = crearElemento('div', { clases: 'agregar' });
+    const entrada = crearElemento('input', { clases: 'campo' });
+    entrada.type = 'text';
+    entrada.placeholder = PISTA_DE_CATEGORIA['misiones'];
+    entrada.setAttribute('aria-label', 'El nombre de la misión nueva');
+    const sumar = (): void => {
+      const texto = entrada.value;
+      if (texto.trim() === '') return;
+      entrada.value = '';
+      const nuevoId = idLibre(idsDe(nivel, 'misiones'), idDesdeNombre(texto.trim()));
+      actualizar((actual) => conCosa(actual, 'misiones', texto));
+      // Se abre sola la elección de cómo se cumple, como en una regla.
+      abiertoMision = { misionId: nuevoId, paso: 'cumple' };
+      pintar();
+    };
+    entrada.addEventListener('keydown', (evento) => {
+      if (evento.key === 'Enter') sumar();
+    });
+    agregar.appendChild(entrada);
+    agregar.appendChild(
+      crearBoton({ etiqueta: 'Agregar misión', pictograma: '＋', clasesExtra: 'agregar__boton', alElegir: sumar }),
+    );
+    panel.appendChild(agregar);
+    return panel;
+  }
+
+  /** Una misión: su frase en castellano, sus cuatro pasos grandes y su borrar. */
+  function pintarMision(mision: MisionEditor, indice: number): HTMLElement {
+    const tarjeta = crearElemento('section', { clases: 'mision' });
+    tarjeta.setAttribute('data-mision', mision.id);
+
+    tarjeta.appendChild(
+      crearElemento('h3', { clases: 'mision__titulo', texto: `Misión ${indice + 1}: ${mision.nombre}` }),
+    );
+    tarjeta.appendChild(crearElemento('p', { clases: 'mision__frase', texto: fraseDeMision(nivel, mision) }));
+
+    const pasos = crearElemento('div', { clases: 'mision__pasos' });
+    pasos.appendChild(pintarPasoCumple(mision));
+    if (mision.cumpleId !== null) pasos.appendChild(pintarPasoDatos(mision));
+    pasos.appendChild(pintarPasoAntes(mision));
+    pasos.appendChild(pintarPasoPremio(mision));
+    tarjeta.appendChild(pasos);
+
+    if (abiertoMision !== null && abiertoMision.misionId === mision.id) {
+      tarjeta.appendChild(pintarPanelMision(mision));
+    }
+
+    const pie = crearElemento('div', { clases: 'mision__pie' });
+    pie.appendChild(
+      crearBoton({
+        etiqueta: 'Borrar la misión',
+        pictograma: '🗑',
+        clasesExtra: 'mision__borrar',
+        alElegir: () => {
+          abiertoMision = null;
+          actualizar((actual) => sinCosa(actual, 'misiones', mision.id));
+        },
+      }),
+    );
+    tarjeta.appendChild(pie);
+    return tarjeta;
+  }
+
+  function pintarPasoCumple(mision: MisionEditor): HTMLElement {
+    const plantilla = plantillaCuando(mision.cumpleId);
+    const texto = plantilla === null ? 'Elegir cómo se cumple' : `Cómo se cumple: ${plantilla.etiqueta}`;
+    const activo = abiertoMision !== null && abiertoMision.misionId === mision.id && abiertoMision.paso === 'cumple';
+    return opcion(texto, activo, () => abrirMision(mision.id, 'cumple'), '1️⃣');
+  }
+
+  function pintarPasoDatos(mision: MisionEditor): HTMLElement {
+    const plantilla = plantillaCuando(mision.cumpleId);
+    let texto = 'Elegir de qué se trata';
+    if (plantilla !== null) {
+      const elegido = textoDe(mision.cumpleValores, plantilla.quien.clave);
+      texto = elegido === '' ? `De qué se trata: ${plantilla.quien.etiqueta}` : `De qué se trata: ${nombreDe(nivel, elegido)}`;
+    }
+    const activo = abiertoMision !== null && abiertoMision.misionId === mision.id && abiertoMision.paso === 'datos';
+    return opcion(texto, activo, () => abrirMision(mision.id, 'datos'), '2️⃣');
+  }
+
+  function pintarPasoAntes(mision: MisionEditor): HTMLElement {
+    const cuantas = mision.requiere.length;
+    const texto =
+      cuantas === 0 ? 'Elegir qué va antes' : `Antes: ${cuantas === 1 ? '1 misión' : `${cuantas} misiones`}`;
+    const activo = abiertoMision !== null && abiertoMision.misionId === mision.id && abiertoMision.paso === 'antes';
+    return opcion(texto, activo, () => abrirMision(mision.id, 'antes'), '3️⃣');
+  }
+
+  function pintarPasoPremio(mision: MisionEditor): HTMLElement {
+    const texto = mision.recompensa === null ? 'Elegir el premio' : 'Premio elegido';
+    const activo = abiertoMision !== null && abiertoMision.misionId === mision.id && abiertoMision.paso === 'premio';
+    return opcion(texto, activo, () => abrirMision(mision.id, 'premio'), '4️⃣');
+  }
+
+  function pintarPanelMision(mision: MisionEditor): HTMLElement {
+    const paso = abiertoMision === null ? 'cumple' : abiertoMision.paso;
+    if (paso === 'datos') return pintarPanelDatosMision(mision);
+    if (paso === 'antes') return pintarPanelAntesMision(mision);
+    if (paso === 'premio') return pintarPanelPremioMision(mision);
+    return pintarPanelCumpleMision(mision);
+  }
+
+  function pintarPanelCumpleMision(mision: MisionEditor): HTMLElement {
+    const panel = crearElemento('div', { clases: 'panel' });
+    panel.appendChild(crearElemento('p', { clases: 'panel__titulo', texto: '¿Cuándo se cumple?' }));
+    const opciones = crearElemento('div', { clases: 'opciones' });
+    for (const plantilla of PLANTILLAS_CUANDO) {
+      opciones.appendChild(
+        opcion(
+          plantilla.etiqueta,
+          mision.cumpleId === plantilla.id,
+          () => {
+            abiertoMision = { misionId: mision.id, paso: 'datos' };
+            actualizar((actual) =>
+              elegirCumple(actual, mision.id, plantilla.id, valoresPorDefectoCuando(plantilla.id)),
+            );
+          },
+          plantilla.pictograma,
+        ),
+      );
+    }
+    panel.appendChild(opciones);
+    return panel;
+  }
+
+  function pintarPanelDatosMision(mision: MisionEditor): HTMLElement {
+    const panel = crearElemento('div', { clases: 'panel' });
+    const plantilla = plantillaCuando(mision.cumpleId);
+    if (plantilla === null) return panel;
+    panel.appendChild(crearElemento('p', { clases: 'panel__titulo', texto: '¿De qué se trata?' }));
+    panel.appendChild(
+      pintarPregunta(
+        plantilla.quien,
+        mision.cumpleValores[plantilla.quien.clave],
+        (valor) => actualizar((actual) => ponerValorCumple(actual, mision.id, plantilla.quien.clave, valor)),
+        '',
+      ),
+    );
+    for (const extra of plantilla.extras) {
+      panel.appendChild(
+        pintarPregunta(
+          extra,
+          mision.cumpleValores[extra.clave],
+          (valor) => actualizar((actual) => ponerValorCumple(actual, mision.id, extra.clave, valor)),
+          '',
+        ),
+      );
+    }
+    return panel;
+  }
+
+  function pintarPanelAntesMision(mision: MisionEditor): HTMLElement {
+    const panel = crearElemento('div', { clases: 'panel' });
+    panel.appendChild(
+      crearElemento('p', { clases: 'panel__titulo', texto: '¿Qué va antes? (el orden manda)' }),
+    );
+
+    const elegidas = crearElemento('div', { clases: 'antes' });
+    mision.requiere.forEach((id, i) => {
+      const fila = crearElemento('div', { clases: 'antes__fila' });
+      fila.appendChild(crearElemento('span', { clases: 'antes__numero', texto: `${i + 1}.` }));
+      fila.appendChild(crearElemento('span', { clases: 'antes__nombre', texto: nombreDe(nivel, id) }));
+      fila.appendChild(
+        crearBoton({
+          etiqueta: 'Subir',
+          pictograma: '⬆',
+          nombreAccesible: `Subir ${nombreDe(nivel, id)}`,
+          clasesExtra: 'antes__flecha',
+          alElegir: () => actualizar((actual) => moverRequiere(actual, mision.id, id, -1)),
+        }),
+      );
+      fila.appendChild(
+        crearBoton({
+          etiqueta: 'Bajar',
+          pictograma: '⬇',
+          nombreAccesible: `Bajar ${nombreDe(nivel, id)}`,
+          clasesExtra: 'antes__flecha',
+          alElegir: () => actualizar((actual) => moverRequiere(actual, mision.id, id, 1)),
+        }),
+      );
+      fila.appendChild(
+        crearBoton({
+          etiqueta: 'Sacar',
+          pictograma: '✕',
+          nombreAccesible: `Sacar ${nombreDe(nivel, id)} de lo que va antes`,
+          clasesExtra: 'antes__sacar',
+          alElegir: () => actualizar((actual) => alternarRequiere(actual, mision.id, id)),
+        }),
+      );
+      elegidas.appendChild(fila);
+    });
+    if (mision.requiere.length === 0) {
+      elegidas.appendChild(
+        crearElemento('p', {
+          clases: 'antes__vacio',
+          texto: 'Nada antes: esta misión se puede empezar desde el arranque.',
+        }),
+      );
+    }
+    panel.appendChild(elegidas);
+
+    const candidatas = candidatasARequisito(nivel, mision.id);
+    if (candidatas.length > 0) {
+      panel.appendChild(crearElemento('p', { clases: 'pregunta__titulo', texto: 'Tocá una misión para ponerla antes' }));
+      const fila = crearElemento('div', { clases: 'opciones' });
+      for (const candidata of candidatas) {
+        const yaEsta = mision.requiere.indexOf(candidata.id) !== -1;
+        fila.appendChild(
+          opcion(
+            candidata.nombre,
+            yaEsta,
+            () => actualizar((actual) => alternarRequiere(actual, mision.id, candidata.id)),
+            yaEsta ? '✅' : '＋',
+          ),
+        );
+      }
+      panel.appendChild(fila);
+    } else {
+      panel.appendChild(
+        crearElemento('p', { clases: 'pregunta__nota', texto: 'Todavía no hay otra misión para poner antes.' }),
+      );
+    }
+    return panel;
+  }
+
+  function pintarPanelPremioMision(mision: MisionEditor): HTMLElement {
+    const panel = crearElemento('div', { clases: 'panel' });
+    panel.appendChild(crearElemento('p', { clases: 'panel__titulo', texto: '¿Qué se gana al cumplirla?' }));
+    panel.appendChild(
+      crearSelectorDeRecompensas({
+        recompensas: videosDisponibles(),
+        elegidoId: mision.recompensa,
+        etiqueta: 'Ver los videos',
+        titulo: '¿Qué video se gana?',
+        subtitulo: 'Tocá el premio de esta misión',
+        alElegir: (premio) => actualizar((actual) => ponerRecompensa(actual, mision.id, premio.id)),
+      }).elemento,
+    );
+    panel.appendChild(
+      crearBoton({
+        etiqueta: 'Sin premio',
+        pictograma: '🚫',
+        clasesExtra: 'mision__sin-premio',
+        alElegir: () => actualizar((actual) => ponerRecompensa(actual, mision.id, null)),
+      }),
+    );
+    return panel;
+  }
+
   // ── La pantalla entera ─────────────────────────────────────────────────────
 
   function actualizar(cambio: (nivel: NivelEnConstruccion) => NivelEnConstruccion): void {
@@ -482,6 +794,7 @@ export function crearEditor(opciones: OpcionesEditor): Editor {
     raiz.appendChild(cabecera);
 
     raiz.appendChild(pintarCosas());
+    raiz.appendChild(pintarMisiones());
 
     const revision = revisar(nivel);
     const barra = crearElemento('div', { clases: 'barra' });
@@ -489,7 +802,10 @@ export function crearEditor(opciones: OpcionesEditor): Editor {
     barra.appendChild(
       crearElemento('p', {
         clases: 'barra__cuenta',
-        texto: nivel.reglas.length === 0 ? 'Todavía no hay reglas' : `${listas} de ${nivel.reglas.length} reglas listas`,
+        texto:
+          nivel.reglas.length === 0
+            ? 'Todavía no hay reglas'
+            : `${listas} de ${nivel.reglas.length} reglas listas · ${misionesCompletas(nivel)} de ${nivel.misiones.length} misiones`,
       }),
     );
     barra.appendChild(
@@ -542,10 +858,18 @@ export function crearEditor(opciones: OpcionesEditor): Editor {
   // La función se usa antes de declararla (los botones la llaman al tocarse).
   pintar();
 
+  function abrirNivel(nuevo: NivelEnConstruccion): void {
+    nivel = nuevo;
+    abierto = null;
+    abiertoMision = null;
+    pintar();
+  }
+
   return {
     elemento: raiz,
     pintar,
     nivel: () => nivel,
     actualizar,
+    abrir: abrirNivel,
   };
 }

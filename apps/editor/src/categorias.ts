@@ -10,8 +10,12 @@
 /** Las cosas del juego, por categoría. Calzan con las listas del nivel en construcción. */
 export type Categoria = 'entidades' | 'zonas' | 'contadores' | 'interruptores' | 'misiones';
 
-/** Todas las categorías, en el orden en que se le ofrecen al grande. */
-export const CATEGORIAS: readonly Categoria[] = ['entidades', 'zonas', 'contadores', 'interruptores', 'misiones'];
+/**
+ * Las cosas que se listan en "Lo que tiene el juego", en el orden en que se le
+ * ofrecen al grande. Las MISIONES no van acá: tienen su propia pantalla (con
+ * prerrequisitos y premio), así no se ofrecen dos veces.
+ */
+export const CATEGORIAS: readonly Categoria[] = ['entidades', 'zonas', 'contadores', 'interruptores'];
 
 /** Cómo se llama cada lista en pantalla. */
 export const ETIQUETA_DE_CATEGORIA: Record<Categoria, string> = {

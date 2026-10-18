@@ -112,6 +112,54 @@
   .accion__titulo { margin: 0 0 0.4rem; font-weight: 800; font-size: clamp(1.05rem, 2.6vw, 1.3rem); }
   .accion__sacar { min-height: 2.8rem !important; font-size: 1rem !important; background: #a4302f !important; }
 
+  /* ── Las misiones (prerrequisitos en orden y premio) ── */
+  .misiones {
+    background: var(--js-color-superficie, #fff);
+    border: 0.25rem solid var(--js-color-borde, #16202b);
+    border-radius: 1.25rem;
+    padding: 1rem;
+  }
+  .misiones__titulo { margin: 0 0 0.35rem; font-size: clamp(1.25rem, 3.5vw, 1.75rem); }
+  .misiones__bajada, .misiones__vacio { margin: 0 0 0.6rem; color: var(--js-color-texto-suave, #43536a); font-size: clamp(1rem, 2.5vw, 1.15rem); }
+  .misiones__ciclo { margin: 0.2rem 0 0; font-size: clamp(1rem, 2.4vw, 1.15rem); }
+  .aviso--ciclo { background: #fff1e6; border-color: #b5651d; margin-bottom: 0.75rem; }
+  .misiones__lista { display: flex; flex-direction: column; gap: 0.9rem; }
+  .misiones__lista:empty { display: none; }
+  .mision { padding: 0.8rem; border: 0.2rem solid var(--js-color-borde, #16202b); border-radius: 1rem; background: var(--js-color-fondo, #fdf6e3); }
+  .mision__titulo { margin: 0 0 0.3rem; font-size: clamp(1.1rem, 3vw, 1.4rem); }
+  .mision__frase { margin: 0 0 0.6rem; font-weight: 700; font-size: clamp(1rem, 2.6vw, 1.2rem); line-height: 1.3; }
+  .mision__pasos, .mision__pie { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .mision__pie { margin-top: 0.7rem; }
+  .mision__borrar { background: #a4302f !important; min-height: 3rem !important; font-size: 1.05rem !important; }
+  .mision__sin-premio { background: var(--js-color-primario-oscuro, #14508f) !important; min-height: 3rem !important; margin-top: 0.6rem !important; font-size: 1.05rem !important; }
+  .antes { display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 0.6rem; }
+  .antes__fila { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; padding: 0.35rem 0.5rem; border-radius: 0.8rem; background: var(--js-color-superficie, #fff); border: 0.2rem solid var(--js-color-borde, #16202b); }
+  .antes__numero { font-weight: 800; font-size: 1.2rem; min-width: 1.6rem; }
+  .antes__nombre { font-weight: 700; font-size: clamp(1rem, 2.5vw, 1.2rem); flex: 1 1 8rem; }
+  .antes__flecha, .antes__sacar { min-height: 2.8rem !important; min-width: 2.8rem !important; padding: 0.2rem 0.6rem !important; font-size: 1rem !important; }
+  .antes__sacar { background: #a4302f !important; }
+  .antes__vacio { margin: 0; color: var(--js-color-texto-suave, #43536a); }
+
+  /* ── El panel "Mis niveles" (guardar, abrir, borrar, archivo) ── */
+  .panel-niveles {
+    background: var(--js-color-superficie, #fff);
+    border: 0.25rem solid var(--js-color-borde, #16202b);
+    border-radius: 1.25rem;
+    padding: 1rem;
+  }
+  .panel-niveles__titulo { margin: 0 0 0.6rem; font-size: clamp(1.25rem, 3.5vw, 1.75rem); }
+  .panel-niveles__guardar, .panel-niveles__archivo { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; margin-bottom: 0.6rem; }
+  .panel-niveles__boton { min-height: 3.4rem !important; font-size: clamp(1rem, 2.4vw, 1.2rem) !important; }
+  .panel-niveles__archivo .panel-niveles__boton:first-of-type { background: var(--js-color-primario-oscuro, #14508f) !important; }
+  .panel-niveles__archivo-oculto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .panel-niveles__aviso { margin: 0 0 0.6rem; font-weight: 700; min-height: 1.4rem; }
+  .panel-niveles__lista { display: flex; flex-direction: column; gap: 0.8rem; }
+  .panel-niveles__vacio { margin: 0; color: var(--js-color-texto-suave, #43536a); font-size: clamp(1rem, 2.5vw, 1.15rem); }
+  .panel-niveles__tarjeta { display: flex; flex-direction: column; gap: 0.5rem; }
+  .panel-niveles__abrir, .panel-niveles__borrar { min-height: 3rem !important; font-size: 1.05rem !important; }
+  .panel-niveles__abrir { background: #238636 !important; }
+  .panel-niveles__borrar { background: #a4302f !important; }
+
   /* ── El tablero de la prueba (tapa todo mientras se juega) ── */
   #prueba { display: none; position: fixed; inset: 0; z-index: 90; flex-direction: column; background: #0d1117; color: #e6edf3; }
   #prueba.visible { display: flex; }

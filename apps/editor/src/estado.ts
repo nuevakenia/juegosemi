@@ -44,6 +44,25 @@ export interface ReglaEditor {
   acciones: AccionElegida[];
 }
 
+/**
+ * Una MISIÓN en construcción: qué hay que lograr, de qué depende y qué se gana.
+ *
+ * Es la parte que faltaba del editor. Una misión se arma como una regla (primero
+ * se elige cómo se cumple, igual que el paso CUANDO) pero además lleva sus
+ * PRERREQUISITOS EN ORDEN (de qué misiones depende, y en qué orden hay que
+ * cumplirlas: el orden manda) y su PREMIO (un video del catálogo).
+ */
+export interface MisionEditor extends CosaEditor {
+  /** Cómo se cumple: la plantilla del CUANDO elegida (null mientras no se elija). */
+  cumpleId: string | null;
+  /** Las respuestas de esa condición. */
+  cumpleValores: Respuestas;
+  /** Las misiones que hay que cumplir antes, EN ORDEN (el primero va primero). */
+  requiere: string[];
+  /** El video-premio que se gana al cumplirla (id del catálogo), o null. */
+  recompensa: string | null;
+}
+
 /** El nivel que se está armando. */
 export interface NivelEnConstruccion {
   id: string;
@@ -56,8 +75,8 @@ export interface NivelEnConstruccion {
   contadores: CosaEditor[];
   /** Los interruptores que se prenden (la puerta abierta, el viaje activo). */
   interruptores: CosaEditor[];
-  /** Las misiones por su nombre (armarlas con prerrequisitos es de la otra mitad). */
-  misiones: CosaEditor[];
+  /** Las misiones del juego, con sus prerrequisitos y su premio. */
+  misiones: MisionEditor[];
   reglas: ReglaEditor[];
 }
 
@@ -104,9 +123,16 @@ export function nivelDeArranque(): NivelEnConstruccion {
   );
 }
 
+/** Las cosas de una categoría, en su orden. */
+export function cosasDe(nivel: NivelEnConstruccion, categoria: Categoria): CosaEditor[] {
+  // Las misiones son cosas con extras (prerrequisitos y premio): igual calzan acá.
+  if (categoria === 'misiones') return nivel.misiones;
+  return nivel[categoria];
+}
+
 /** Los ids de las cosas de una categoría (para no repetirlos). */
 export function idsDe(nivel: NivelEnConstruccion, categoria: Categoria): string[] {
-  return nivel[categoria].map((cosa) => cosa.id);
+  return cosasDe(nivel, categoria).map((cosa) => cosa.id);
 }
 
 /** Lee una respuesta de una regla como texto (vacío si no está). */
@@ -134,11 +160,17 @@ export function conCosa(nivel: NivelEnConstruccion, categoria: Categoria, nombre
   const limpio = nombre.trim();
   if (limpio === '') return nivel;
   const id = idLibre(idsDe(nivel, categoria), idDesdeNombre(limpio));
+  if (categoria === 'misiones') {
+    return { ...nivel, misiones: [...nivel.misiones, misionEnBlanco(id, limpio)] };
+  }
   return { ...nivel, [categoria]: [...nivel[categoria], { id, nombre: limpio }] };
 }
 
 /** Saca una cosa de una categoría (sus reglas quedan como están: el validador avisa). */
 export function sinCosa(nivel: NivelEnConstruccion, categoria: Categoria, id: string): NivelEnConstruccion {
+  if (categoria === 'misiones') {
+    return { ...nivel, misiones: nivel.misiones.filter((mision) => mision.id !== id) };
+  }
   return { ...nivel, [categoria]: nivel[categoria].filter((cosa) => cosa.id !== id) };
 }
 
@@ -150,7 +182,7 @@ export function conTitulo(nivel: NivelEnConstruccion, titulo: string): NivelEnCo
 /** El nombre legible de una cosa por su id (el id tal cual si no la encuentra). */
 export function nombreDe(nivel: NivelEnConstruccion, id: string): string {
   for (const categoria of ['entidades', 'zonas', 'contadores', 'interruptores', 'misiones'] as const) {
-    for (const cosa of nivel[categoria]) {
+    for (const cosa of cosasDe(nivel, categoria)) {
       if (cosa.id === id) return cosa.nombre;
     }
   }
@@ -285,4 +317,128 @@ export function quitarAccion(nivel: NivelEnConstruccion, reglaId: string, indice
     ...regla,
     acciones: regla.acciones.filter((_, i) => i !== indice),
   }));
+}
+
+// ── Las misiones (sus prerrequisitos, su cómo-se-cumple y su premio) ─────────
+
+/** Una misión recién creada: con su nombre, sin condición, sin deps y sin premio. */
+export function misionEnBlanco(id: string, nombre: string): MisionEditor {
+  return { id, nombre, cumpleId: null, cumpleValores: {}, requiere: [], recompensa: null };
+}
+
+/** La misión con ese id, o null. */
+export function misionPorId(nivel: NivelEnConstruccion, misionId: string): MisionEditor | null {
+  for (const mision of nivel.misiones) {
+    if (mision.id === misionId) return mision;
+  }
+  return null;
+}
+
+/** Cambia una misión por su id, devolviendo una copia del nivel. */
+function conMision(
+  nivel: NivelEnConstruccion,
+  misionId: string,
+  cambiar: (mision: MisionEditor) => MisionEditor,
+): NivelEnConstruccion {
+  return {
+    ...nivel,
+    misiones: nivel.misiones.map((mision) => (mision.id === misionId ? cambiar(mision) : mision)),
+  };
+}
+
+/**
+ * Elige CÓMO SE CUMPLE una misión (una plantilla del CUANDO, normalmente una
+ * meta: un contador, una zona o otra misión). Arranca las respuestas de cero con
+ * los valores por defecto de la plantilla, igual que el paso CUANDO de una regla.
+ */
+export function elegirCumple(
+  nivel: NivelEnConstruccion,
+  misionId: string,
+  cumpleId: string,
+  valoresPorDefecto: Respuestas,
+): NivelEnConstruccion {
+  return conMision(nivel, misionId, (mision) => ({
+    ...mision,
+    cumpleId,
+    cumpleValores: { ...valoresPorDefecto },
+  }));
+}
+
+/** Pone (o cambia) una respuesta de la condición de una misión. */
+export function ponerValorCumple(
+  nivel: NivelEnConstruccion,
+  misionId: string,
+  clave: string,
+  valor: string | number,
+): NivelEnConstruccion {
+  return conMision(nivel, misionId, (mision) => ({
+    ...mision,
+    cumpleValores: { ...mision.cumpleValores, [clave]: valor },
+  }));
+}
+
+/**
+ * Pone los PRERREQUISITOS de una misión, en el orden dado (el orden manda).
+ * Deja afuera los ids repetidos y la propia misión: una misión no se requiere a
+ * sí misma.
+ */
+export function conRequiere(
+  nivel: NivelEnConstruccion,
+  misionId: string,
+  requiere: readonly string[],
+): NivelEnConstruccion {
+  const limpio: string[] = [];
+  for (const id of requiere) {
+    if (id === misionId) continue;
+    if (limpio.indexOf(id) === -1) limpio.push(id);
+  }
+  return conMision(nivel, misionId, (mision) => ({ ...mision, requiere: limpio }));
+}
+
+/**
+ * Prende o apaga un prerrequisito de una misión. Al prenderlo queda AL FINAL del
+ * orden (y después se puede subir); al apagarlo, se va de la lista.
+ */
+export function alternarRequiere(
+  nivel: NivelEnConstruccion,
+  misionId: string,
+  otraId: string,
+): NivelEnConstruccion {
+  const mision = misionPorId(nivel, misionId);
+  if (mision === null || otraId === misionId) return nivel;
+  if (mision.requiere.indexOf(otraId) !== -1) {
+    return conRequiere(nivel, misionId, mision.requiere.filter((id) => id !== otraId));
+  }
+  return conRequiere(nivel, misionId, [...mision.requiere, otraId]);
+}
+
+/** Mueve un prerrequisito de lugar dentro del orden (positivo baja, negativo sube). */
+export function moverRequiere(
+  nivel: NivelEnConstruccion,
+  misionId: string,
+  otraId: string,
+  cuanto: number,
+): NivelEnConstruccion {
+  const mision = misionPorId(nivel, misionId);
+  if (mision === null) return nivel;
+  const i = mision.requiere.indexOf(otraId);
+  if (i === -1) return nivel;
+  const j = i + cuanto;
+  if (j < 0 || j >= mision.requiere.length) return nivel;
+  const orden = [...mision.requiere];
+  const actual = orden[i];
+  const vecina = orden[j];
+  if (actual === undefined || vecina === undefined) return nivel;
+  orden[i] = vecina;
+  orden[j] = actual;
+  return conRequiere(nivel, misionId, orden);
+}
+
+/** Le pone el premio (el id de un video del catálogo) a una misión, o lo saca. */
+export function ponerRecompensa(
+  nivel: NivelEnConstruccion,
+  misionId: string,
+  recompensa: string | null,
+): NivelEnConstruccion {
+  return conMision(nivel, misionId, (mision) => ({ ...mision, recompensa }));
 }

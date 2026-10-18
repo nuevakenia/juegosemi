@@ -12,7 +12,7 @@
  * No hay una sola regla en código: lo que corre es EXACTAMENTE el nivel que se armó
  * tocando botones. Al terminar (o al tocar "Volver al editor") se apaga el tablero.
  */
-import type { AvisosDelJuego, Nivel } from '@juegosemi/logica';
+import type { AvisosDelJuego, Logica, Nivel } from '@juegosemi/logica';
 import { Puente } from '@juegosemi/logica';
 import type { Entidad, Escena } from '@juegosemi/motor';
 import { Escena as EscenaMotor, Juego } from '@juegosemi/motor';
@@ -50,6 +50,10 @@ export interface Prueba {
   detener(): void;
   /** Para la consola de QA: el puente en vivo (null si no está andando). */
   puente(): Puente | null;
+  /** Para la consola de QA: la escena viva, con sus entidades y zonas. */
+  escena(): Escena | null;
+  /** Para la consola de QA: la lógica del nivel, con su mundo y sus misiones. */
+  logica(): Logica | null;
 }
 
 /** La escena viva de la prueba, con sus zonas. */
@@ -151,6 +155,7 @@ export function crearPrueba(opciones: OpcionesPrueba): Prueba {
   let render: RenderPixi | null = null;
   let entrada: ReturnType<typeof crearEntradaTactil> | null = null;
   let puente: Puente | null = null;
+  let escenaViva: Escena | null = null;
 
   function decir(texto: string): void {
     aviso.textContent = texto;
@@ -161,6 +166,7 @@ export function crearPrueba(opciones: OpcionesPrueba): Prueba {
     const alto = Math.max(240, Math.round(lienzo.clientHeight || 600));
 
     const armado = armarEscenaDePrueba(opciones.entidades, opciones.zonas, ancho, alto);
+    escenaViva = armado.escena;
 
     const avisos: AvisosDelJuego = {
       alDecir: (_entidad, frase) => decir(frase),
@@ -232,8 +238,16 @@ export function crearPrueba(opciones: OpcionesPrueba): Prueba {
       render = null;
     }
     puente = null;
+    escenaViva = null;
     lienzo.textContent = '';
   }
 
-  return { elemento: raiz, iniciar, detener, puente: () => puente };
+  return {
+    elemento: raiz,
+    iniciar,
+    detener,
+    puente: () => puente,
+    escena: () => escenaViva,
+    logica: () => (puente === null ? null : puente.logica),
+  };
 }

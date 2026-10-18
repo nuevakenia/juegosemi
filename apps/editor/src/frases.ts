@@ -11,7 +11,7 @@
  * a medio armar se lee igual, y el grande ve qué le queda por elegir.
  */
 import { recompensaPorId } from '@juegosemi/recompensas';
-import type { NivelEnConstruccion, ReglaEditor } from './estado.ts';
+import type { MisionEditor, NivelEnConstruccion, ReglaEditor } from './estado.ts';
 import { nombreDe, numeroDe, textoDe } from './estado.ts';
 import { ENTIDAD_ACTUAL, SUJETO, nombreDeGesto, plantillaCuando, plantillaEntonces } from './plantillas.ts';
 
@@ -36,12 +36,16 @@ export function unirEnumeracion(partes: readonly string[]): string {
   return `${primera}, ${medio.join(', ')} y ${ultima}`;
 }
 
-/** El paso CUANDO, en castellano. */
-export function fraseDeCuando(nivel: NivelEnConstruccion, regla: ReglaEditor): string {
-  const plantilla = plantillaCuando(regla.cuandoId);
+/** El paso CUANDO, en castellano (sirve para una regla y para el cómo-se-cumple). */
+export function fraseDeCondicion(
+  nivel: NivelEnConstruccion,
+  cuandoId: string | null,
+  cuandoValores: Record<string, string | number>,
+): string {
+  const plantilla = plantillaCuando(cuandoId);
   if (plantilla === null) return `Cuando ${FALTA}`;
-  const v = (clave: string): string => textoDe(regla.cuandoValores, clave);
-  const n = (clave: string): number | null => numeroDe(regla.cuandoValores, clave);
+  const v = (clave: string): string => textoDe(cuandoValores, clave);
+  const n = (clave: string): number | null => numeroDe(cuandoValores, clave);
   const veces = n('veces');
 
   if (plantilla.id === 'toca') {
@@ -118,10 +122,49 @@ export function fraseDeAccion(nivel: NivelEnConstruccion, entoncesId: string, va
   }
 }
 
+/** El paso CUANDO de una regla, en castellano. */
+export function fraseDeCuando(nivel: NivelEnConstruccion, regla: ReglaEditor): string {
+  return fraseDeCondicion(nivel, regla.cuandoId, regla.cuandoValores);
+}
+
 /** Toda la regla en una frase: "Cuando ... : ... y ...". */
 export function fraseDeRegla(nivel: NivelEnConstruccion, regla: ReglaEditor): string {
   const cuando = fraseDeCuando(nivel, regla);
   const acciones = regla.acciones.map((accion) => fraseDeAccion(nivel, accion.entoncesId, accion.valores));
   if (acciones.length === 0) return `${cuando}: (todavía no dice qué hace)`;
   return `${cuando}: ${unirEnumeracion(acciones)}`;
+}
+
+// ── Las misiones ────────────────────────────────────────────────────────────
+
+/** Cuando una misión no tiene nada antes, se dice así y no queda un hueco. */
+export const SIN_PRERREQUISITOS = 'nada antes';
+
+/** Cuando una misión todavía no tiene premio, se dice así. */
+export const SIN_PREMIO = 'sin premio';
+
+/** Los prerrequisitos de una misión, en su orden, con sus nombres en castellano. */
+export function fraseDePrerrequisitos(nivel: NivelEnConstruccion, mision: MisionEditor): string {
+  if (mision.requiere.length === 0) return SIN_PRERREQUISITOS;
+  return unirEnumeracion(mision.requiere.map((id) => nombreDeCosa(nivel, id)));
+}
+
+/** El premio de una misión, en castellano (el título del video). */
+export function fraseDeRecompensa(mision: MisionEditor): string {
+  if (mision.recompensa === null) return SIN_PREMIO;
+  return `el video «${tituloDeVideo(mision.recompensa)}»`;
+}
+
+/**
+ * Toda la misión en una frase, para que el grande lea de un tirón qué hay que
+ * lograr, qué va antes y qué se gana:
+ *
+ *   "Misión 1: Subir las maletas · se cumple cuando el contador maletas llega a 3
+ *    · antes: nada · premio: el video «La casa de la tía»"
+ */
+export function fraseDeMision(nivel: NivelEnConstruccion, mision: MisionEditor): string {
+  const cumple = mision.cumpleId === null
+    ? 'todavía no dice cómo se cumple'
+    : `${fraseDeCondicion(nivel, mision.cumpleId, mision.cumpleValores)}`;
+  return `${cumple} · antes: ${fraseDePrerrequisitos(nivel, mision)} · premio: ${fraseDeRecompensa(mision)}`;
 }
