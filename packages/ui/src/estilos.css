@@ -1,0 +1,304 @@
+/* Estilos de @juegosemi/ui.
+ *
+ * Pensados para un niño con dificultades de aprendizaje:
+ * - blancos de toque grandes (88px de alto minimo, segun TOQUE_MINIMO_PX);
+ * - texto grande que se agranda solo con el ancho de la pantalla;
+ * - alto contraste y foco siempre visible;
+ * - sin animaciones que mareen (se apagan con "reducir movimiento");
+ * - todo el tamano en rem, asi el zoom del navegador agranda la interfaz entera.
+ *
+ * Los nombres de clase calzan con los que generan los componentes en TypeScript.
+ */
+
+:root {
+  /* Blancos de toque */
+  --js-toque-minimo: 5.5rem; /* 88px con base de 16px */
+
+  /* Espaciado y forma */
+  --js-espacio: 1rem;
+  --js-espacio-grande: 2rem;
+  --js-radio: 1.5rem;
+  --js-radio-chico: 0.75rem;
+
+  /* Colores: fondo calido y suave, texto casi negro para maximo contraste */
+  --js-color-fondo: #fdf6e3;
+  --js-color-superficie: #ffffff;
+  --js-color-texto: #16202b;
+  --js-color-texto-suave: #43536a;
+  --js-color-primario: #1f6feb;
+  --js-color-primario-oscuro: #14508f;
+  --js-color-borde: #16202b;
+  --js-color-apagado: #b9c2cf;
+
+  /* Sombra tipo "tecla": da sensacion de que el boton se puede apretar */
+  --js-sombra-reposo: 0 6px 0 rgba(22, 32, 43, 0.35);
+  --js-sombra-apretado: 0 2px 0 rgba(22, 32, 43, 0.35);
+
+  /* Tipografia que crece con la pantalla, pero nunca queda chica */
+  --js-texto-titulo: clamp(1.75rem, 6vw, 3rem);
+  --js-texto-cuerpo: clamp(1.25rem, 4vw, 1.75rem);
+  --js-texto-boton: clamp(1.5rem, 5vw, 2.25rem);
+  --js-texto-pictograma: clamp(2.5rem, 9vw, 4rem);
+
+  --js-foco: 0.375rem;
+}
+
+/* Caja de calculo comoda en todo el paquete */
+.js-pantalla,
+.js-pantalla *,
+.js-menu,
+.js-menu *,
+.js-tarjeta,
+.js-tarjeta *,
+.js-boton,
+.js-boton * {
+  box-sizing: border-box;
+}
+
+/* ---------- Armazon de pantalla ---------- */
+
+.js-pantalla {
+  display: flex;
+  flex-direction: column;
+  gap: var(--js-espacio-grande);
+  min-height: 100%;
+  padding: var(--js-espacio);
+  background-color: var(--js-color-fondo);
+  color: var(--js-color-texto);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.35;
+}
+
+.js-pantalla__cabecera {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.js-pantalla__titulo {
+  margin: 0;
+  font-size: var(--js-texto-titulo);
+  line-height: 1.15;
+}
+
+.js-pantalla__subtitulo {
+  margin: 0;
+  font-size: var(--js-texto-cuerpo);
+  color: var(--js-color-texto-suave);
+}
+
+.js-pantalla__cuerpo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--js-espacio-grande);
+  flex: 1 1 auto;
+}
+
+/* ---------- Boton grande ---------- */
+
+.js-boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: var(--js-toque-minimo);
+  min-width: var(--js-toque-minimo);
+  padding: 0.75rem 1.5rem;
+  border: 0.25rem solid var(--js-color-borde);
+  border-radius: var(--js-radio);
+  background-color: var(--js-color-primario);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: var(--js-texto-boton);
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--js-sombra-reposo);
+  /* Deja el boton siempre a la vista del dedo y del lector */
+  transition: transform 120ms ease, box-shadow 120ms ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.js-boton__pictograma {
+  font-size: var(--js-texto-pictograma);
+  line-height: 1;
+}
+
+.js-boton:hover {
+  background-color: var(--js-color-primario-oscuro);
+}
+
+.js-boton:active {
+  transform: translateY(0.25rem);
+  box-shadow: var(--js-sombra-apretado);
+}
+
+/* Foco bien visible y separado del borde */
+.js-boton:focus-visible {
+  outline: var(--js-foco) solid var(--js-color-texto);
+  outline-offset: 0.25rem;
+}
+
+/* Boton apagado: se ve gris y no invita a tocarlo */
+.js-boton:disabled,
+.js-boton[aria-disabled="true"] {
+  background-color: var(--js-color-apagado);
+  border-color: var(--js-color-apagado);
+  color: var(--js-color-texto-suave);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.js-boton:disabled .js-boton__texto,
+.js-boton[aria-disabled="true"] .js-boton__texto {
+  color: var(--js-color-texto-suave);
+}
+
+/* El boton de volver queda pegado a la izquierda y no se estira */
+.js-boton--volver {
+  align-self: flex-start;
+}
+
+/* ---------- Menu ---------- */
+
+.js-menu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--js-espacio);
+}
+
+.js-menu__titulo {
+  margin: 0;
+  font-size: var(--js-texto-titulo);
+  line-height: 1.15;
+}
+
+/* Una sola columna en el celular; mas columnas donde entra la pantalla */
+.js-menu__opciones {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--js-espacio);
+}
+
+.js-menu__opciones .js-boton {
+  width: 100%;
+}
+
+/* ---------- Tarjeta grande ---------- */
+
+.js-tarjeta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: calc(var(--js-toque-minimo) * 2);
+  padding: var(--js-espacio-grande);
+  border: 0.25rem solid var(--js-color-borde);
+  border-radius: var(--js-radio);
+  background-color: var(--js-color-superficie);
+  color: var(--js-color-texto);
+  font-family: inherit;
+  text-align: center;
+}
+
+.js-tarjeta__pictograma {
+  font-size: var(--js-texto-pictograma);
+  line-height: 1;
+}
+
+.js-tarjeta__titulo {
+  font-size: var(--js-texto-titulo);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.js-tarjeta__texto {
+  font-size: var(--js-texto-cuerpo);
+  color: var(--js-color-texto-suave);
+}
+
+/* Una tarjeta elegible es un boton completo: toda la superficie responde */
+.js-tarjeta--elegible {
+  cursor: pointer;
+  box-shadow: var(--js-sombra-reposo);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.js-tarjeta--elegible:hover {
+  background-color: #eef4ff;
+}
+
+.js-tarjeta--elegible:active {
+  transform: translateY(0.25rem);
+  box-shadow: var(--js-sombra-apretado);
+}
+
+.js-tarjeta--elegible:focus-visible {
+  outline: var(--js-foco) solid var(--js-color-primario);
+  outline-offset: 0.25rem;
+}
+
+/* ---------- Pantallas medianas (tablet en vertical) ---------- */
+
+@media (min-width: 40rem) {
+  .js-menu__opciones {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .js-pantalla {
+    padding: var(--js-espacio-grande);
+  }
+}
+
+/* ---------- Pantallas grandes (tablet en horizontal, escritorio) ---------- */
+
+@media (min-width: 64rem) {
+  .js-menu__opciones {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .js-pantalla,
+  .js-menu,
+  .js-pantalla__cuerpo {
+    max-width: 72rem;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+  }
+}
+
+/* ---------- Modo oscuro: mantiene el contraste alto ---------- */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --js-color-fondo: #10161f;
+    --js-color-superficie: #1b2534;
+    --js-color-texto: #f4f7fb;
+    --js-color-texto-suave: #c2ccdb;
+    --js-color-borde: #f4f7fb;
+    --js-color-primario: #4d9bff;
+    --js-color-primario-oscuro: #2b78dd;
+    --js-color-apagado: #495365;
+  }
+
+  .js-tarjeta--elegible:hover {
+    background-color: #223046;
+  }
+}
+
+/* ---------- Respeto por quien pide menos movimiento ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .js-boton,
+  .js-tarjeta--elegible {
+    transition: none;
+  }
+
+  .js-boton:active,
+  .js-tarjeta--elegible:active {
+    transform: none;
+  }
+}

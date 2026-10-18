@@ -1,0 +1,36 @@
+{
+  "_comentario": "Plantilla de rig de un humano cabezón (estilo Mii / South Park). Todo son DATOS: para cambiar el cuerpo se edita este archivo, no hay ningún editor gráfico. El origen del personaje es el CENTRO DE ARRIBA DE LA CABEZA: x=0 es la línea de simetría, y hacia abajo y crece. Cada pieza se cuelga de su padre (desplazamiento en el sistema local del padre), gira sobre su pivote, y así el brazo entero se mueve cuando gira el hombro. OJO: las piezas espejadas (escala.x = -1, el lado derecho) giran al REVÉS que su valor en grados; por eso en las poses los pares simétricos llevan el mismo número y salen en espejo.",
+  "id": "humano-cabezon",
+  "nombre": "Humano cabezón (Mii / South Park)",
+  "altoReferencia": 240,
+  "raiz": "torso",
+  "piezas": [
+    { "id": "torso", "padre": null, "desplazamiento": { "x": -36, "y": 80 }, "tamano": { "ancho": 72, "alto": 76 }, "pivote": { "x": 36, "y": 0 }, "orden": 10, "rol": "camisa" },
+
+    { "id": "cabeza", "padre": "torso", "desplazamiento": { "x": -9, "y": -80 }, "tamano": { "ancho": 90, "alto": 80 }, "pivote": { "x": 45, "y": 78 }, "orden": 20, "rol": "piel" },
+    { "id": "pelo", "padre": "cabeza", "desplazamiento": { "x": -3, "y": -4 }, "tamano": { "ancho": 96, "alto": 40 }, "pivote": { "x": 48, "y": 40 }, "orden": 21, "rol": "pelo" },
+    { "id": "cara", "padre": "cabeza", "desplazamiento": { "x": 11, "y": 16 }, "tamano": { "ancho": 68, "alto": 52 }, "pivote": { "x": 34, "y": 26 }, "orden": 22, "rol": "piel" },
+    { "id": "ojo-izq", "padre": "cara", "desplazamiento": { "x": 12, "y": 14 }, "tamano": { "ancho": 16, "alto": 10 }, "pivote": { "x": 8, "y": 5 }, "orden": 23, "rol": "ojo" },
+    { "id": "ojo-der", "padre": "cara", "desplazamiento": { "x": 40, "y": 14 }, "tamano": { "ancho": 16, "alto": 10 }, "pivote": { "x": 8, "y": 5 }, "orden": 23, "rol": "ojo" },
+    { "id": "ceja-izq", "padre": "cara", "desplazamiento": { "x": 12, "y": 6 }, "tamano": { "ancho": 16, "alto": 6 }, "pivote": { "x": 8, "y": 3 }, "orden": 24, "rol": "pelo" },
+    { "id": "ceja-der", "padre": "cara", "desplazamiento": { "x": 40, "y": 6 }, "tamano": { "ancho": 16, "alto": 6 }, "pivote": { "x": 8, "y": 3 }, "orden": 24, "rol": "pelo" },
+    { "id": "nariz", "padre": "cara", "desplazamiento": { "x": 30, "y": 26 }, "tamano": { "ancho": 8, "alto": 8 }, "pivote": { "x": 4, "y": 4 }, "orden": 25, "rol": "piel" },
+    { "id": "boca", "padre": "cara", "desplazamiento": { "x": 20, "y": 34 }, "tamano": { "ancho": 28, "alto": 16 }, "pivote": { "x": 14, "y": 8 }, "orden": 26, "rol": "boca" },
+
+    { "id": "brazo-sup-izq", "padre": "torso", "desplazamiento": { "x": -6, "y": 4 }, "tamano": { "ancho": 18, "alto": 46 }, "pivote": { "x": 9, "y": 5 }, "orden": 11, "rol": "camisa" },
+    { "id": "brazo-inf-izq", "padre": "brazo-sup-izq", "desplazamiento": { "x": 1, "y": 42 }, "tamano": { "ancho": 16, "alto": 40 }, "pivote": { "x": 8, "y": 5 }, "orden": 12, "rol": "piel" },
+    { "id": "mano-izq", "padre": "brazo-inf-izq", "desplazamiento": { "x": 0, "y": 36 }, "tamano": { "ancho": 18, "alto": 18 }, "pivote": { "x": 9, "y": 5 }, "orden": 13, "rol": "piel" },
+
+    { "id": "brazo-sup-der", "padre": "torso", "desplazamiento": { "x": 60, "y": 4 }, "tamano": { "ancho": 18, "alto": 46 }, "pivote": { "x": 9, "y": 5 }, "escala": { "x": -1, "y": 1 }, "orden": 11, "rol": "camisa" },
+    { "id": "brazo-inf-der", "padre": "brazo-sup-der", "desplazamiento": { "x": 1, "y": 42 }, "tamano": { "ancho": 16, "alto": 40 }, "pivote": { "x": 8, "y": 5 }, "orden": 12, "rol": "piel" },
+    { "id": "mano-der", "padre": "brazo-inf-der", "desplazamiento": { "x": 0, "y": 36 }, "tamano": { "ancho": 18, "alto": 18 }, "pivote": { "x": 9, "y": 5 }, "orden": 13, "rol": "piel" },
+
+    { "id": "pierna-sup-izq", "padre": "torso", "desplazamiento": { "x": 6, "y": 76 }, "tamano": { "ancho": 18, "alto": 40 }, "pivote": { "x": 9, "y": 3 }, "orden": 1, "rol": "pantalon" },
+    { "id": "pierna-inf-izq", "padre": "pierna-sup-izq", "desplazamiento": { "x": 1, "y": 40 }, "tamano": { "ancho": 16, "alto": 36 }, "pivote": { "x": 8, "y": 3 }, "orden": 2, "rol": "pantalon" },
+    { "id": "pie-izq", "padre": "pierna-inf-izq", "desplazamiento": { "x": -3, "y": 32 }, "tamano": { "ancho": 24, "alto": 12 }, "pivote": { "x": 4, "y": 6 }, "orden": 3, "rol": "zapato" },
+
+    { "id": "pierna-sup-der", "padre": "torso", "desplazamiento": { "x": 48, "y": 76 }, "tamano": { "ancho": 18, "alto": 40 }, "pivote": { "x": 9, "y": 3 }, "escala": { "x": -1, "y": 1 }, "orden": 1, "rol": "pantalon" },
+    { "id": "pierna-inf-der", "padre": "pierna-sup-der", "desplazamiento": { "x": 1, "y": 40 }, "tamano": { "ancho": 16, "alto": 36 }, "pivote": { "x": 8, "y": 3 }, "orden": 2, "rol": "pantalon" },
+    { "id": "pie-der", "padre": "pierna-inf-der", "desplazamiento": { "x": -3, "y": 32 }, "tamano": { "ancho": 24, "alto": 12 }, "pivote": { "x": 4, "y": 6 }, "orden": 3, "rol": "zapato" }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "_comentario": "Los personajes reales de la casa, definidos 100% por datos: plantilla + paleta + unos pocos rasgos. Nadie los dibujó. Si hay que cambiarle el pelo a alguien, se cambia un número acá. Las claves de 'rasgos' son ids de PIEZA del rig (torso, pelo, boca...), nunca nombres de rol de la paleta.",
+  "personajes": [
+    {
+      "id": "emiliano",
+      "nombre": "Emiliano",
+      "plantilla": "humano-cabezon",
+      "paleta": "familia",
+      "cara": "familia",
+      "animaciones": ["quieto", "caminar", "saltar", "saludar"],
+      "rasgos": {
+        "pelo": { "color": "#3a2a1a" },
+        "torso": { "color": "#d9483b" },
+        "brazo-sup-izq": { "color": "#d9483b" },
+        "brazo-sup-der": { "color": "#d9483b" },
+        "boca": { "color": "#b4614f" }
+      }
+    },
+    {
+      "id": "mama",
+      "nombre": "Mamá",
+      "plantilla": "humano-cabezon",
+      "paleta": "familia",
+      "cara": "familia",
+      "animaciones": ["quieto", "caminar", "saludar"],
+      "rasgos": {
+        "pelo": { "color": "#5a3a1e", "escala": { "x": 1, "y": 1.6 }, "desplazamiento": { "x": -3, "y": 14 } },
+        "torso": { "color": "#a44fb0" },
+        "brazo-sup-izq": { "color": "#a44fb0" },
+        "brazo-sup-der": { "color": "#a44fb0" },
+        "pierna-sup-izq": { "color": "#2f3d52" },
+        "pierna-sup-der": { "color": "#2f3d52" },
+        "pierna-inf-izq": { "color": "#2f3d52" },
+        "pierna-inf-der": { "color": "#2f3d52" }
+      }
+    },
+    {
+      "id": "papa",
+      "nombre": "Papá",
+      "plantilla": "humano-cabezon",
+      "paleta": "familia",
+      "cara": "familia",
+      "animaciones": ["quieto", "caminar", "saludar"],
+      "rasgos": {
+        "pelo": { "color": "#241a12" },
+        "torso": { "color": "#3d6b3d" },
+        "brazo-sup-izq": { "color": "#3d6b3d" },
+        "brazo-sup-der": { "color": "#3d6b3d" },
+        "nariz": { "escala": { "x": 1.2, "y": 1 } }
+      }
+    },
+    {
+      "id": "el-caco",
+      "nombre": "el Caco",
+      "plantilla": "humano-cabezon",
+      "paleta": "noche",
+      "cara": "familia",
+      "animaciones": ["quieto", "saltar"],
+      "rasgos": {
+        "pelo": { "color": "#1c140d" },
+        "boca": { "grados": 4 }
+      }
+    }
+  ]
+}

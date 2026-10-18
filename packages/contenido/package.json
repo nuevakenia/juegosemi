@@ -1,0 +1,10 @@
+{
+  "name": "@juegosemi/contenido",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Esquemas y validacion del contenido del juego (familia, autos, escenas, personajes) definido como datos",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

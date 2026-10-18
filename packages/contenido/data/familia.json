@@ -1,0 +1,21 @@
+{
+  "_comentario": "El contenido de la familia son DATOS: se editan a mano o con el taller. Las fotos van en assets/ y se referencian aca. Los nombres y autos son los reales; las imagenes se ponen cuando lleguen las fotos recortadas.",
+  "id": "familia-nuestra",
+  "titulo": "Los autos de la familia",
+  "autos": [
+    { "id": "auto-papa", "nombre": "el auto del papá" },
+    { "id": "auto-mama", "nombre": "el auto de la mamá" },
+    { "id": "auto-caco", "nombre": "el auto del Caco" },
+    { "id": "auto-tia", "nombre": "el auto de la tía" },
+    { "id": "auto-tio", "nombre": "el auto del tío" },
+    { "id": "auto-emiliano", "nombre": "el auto de Emiliano" }
+  ],
+  "personas": [
+    { "id": "papa", "nombre": "Papá", "auto": "auto-papa", "frase": "¡Ese es el auto del papá!" },
+    { "id": "mama", "nombre": "Mamá", "auto": "auto-mama", "frase": "¡Ese es el auto de la mamá!" },
+    { "id": "caco", "nombre": "el Caco", "auto": "auto-caco", "frase": "¡Muy bien! El Caco tiene su auto." },
+    { "id": "tia", "nombre": "la tía", "auto": "auto-tia", "frase": "¡Claro! El auto de la tía." },
+    { "id": "tio", "nombre": "el tío", "auto": "auto-tio", "frase": "¡Sí! El tío y su auto." },
+    { "id": "emiliano", "nombre": "Emiliano", "auto": "auto-emiliano", "frase": "¡Ese es tu auto, Emiliano!" }
+  ]
+}

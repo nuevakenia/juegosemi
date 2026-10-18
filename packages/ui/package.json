@@ -1,0 +1,11 @@
+{
+  "name": "@juegosemi/ui",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Interfaz grafica en DOM/CSS: botones y tarjetas grandes, responsivas y accesibles (nada de canvas para menus)",
+  "exports": {
+    ".": "./src/index.ts",
+    "./estilos.css": "./src/estilos.css"
+  }
+}

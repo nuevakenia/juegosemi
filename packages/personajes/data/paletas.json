@@ -1,0 +1,33 @@
+{
+  "_comentario": "Paletas de color. Un personaje elige UNA paleta y las piezas se pintan por ROL (piel, pelo, camisa...). Cambiar de paleta repinta al personaje entero sin tocar el rig: es la forma más barata de tener variedad y de hacer reaccionar al personaje según la escena (de día, de noche, enojado).",
+  "paletas": [
+    {
+      "id": "familia",
+      "nombre": "Familia (de día)",
+      "colores": {
+        "piel": "#f2c79c",
+        "pielSombra": "#d9a878",
+        "pelo": "#4a3222",
+        "ojo": "#2b2b2b",
+        "boca": "#b4614f",
+        "camisa": "#2f6fb3",
+        "pantalon": "#3b4a5a",
+        "zapato": "#20242a"
+      }
+    },
+    {
+      "id": "noche",
+      "nombre": "Familia (de noche)",
+      "colores": {
+        "piel": "#c9a17d",
+        "pielSombra": "#a8815f",
+        "pelo": "#2e2016",
+        "ojo": "#1a1a1a",
+        "boca": "#8d4a3d",
+        "camisa": "#22487a",
+        "pantalon": "#2b3644",
+        "zapato": "#15181d"
+      }
+    }
+  ]
+}

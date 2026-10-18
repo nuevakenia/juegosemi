@@ -1,0 +1,165 @@
+{
+  "_comentario": "Poses y animaciones. Una pose es DATO: qué pieza gira cuántos grados. Los fotogramas se mezclan solos. Las piezas del lado derecho están espejadas, así que giran al revés que su número: por eso en los pares simétricos (caminar) los dos lados llevan el MISMO número y salen en espejo.",
+  "animaciones": [
+    {
+      "id": "quieto",
+      "nombre": "Quieto (respirando)",
+      "duracion": 2.4,
+      "bucle": true,
+      "fotogramas": [
+        { "en": 0, "pose": { "grados": { "torso": 0, "cabeza": 0, "brazo-sup-izq": 0, "brazo-sup-der": 0 } } },
+        {
+          "en": 0.6,
+          "pose": {
+            "grados": { "torso": 1.5, "cabeza": -2, "brazo-sup-izq": 2.5, "brazo-sup-der": 2.5 },
+            "escalas": { "torso": { "x": 1.02, "y": 1 } }
+          }
+        },
+        {
+          "en": 1.2,
+          "pose": {
+            "grados": { "torso": 0, "cabeza": 0, "brazo-sup-izq": 0, "brazo-sup-der": 0 },
+            "escalas": { "torso": { "x": 1, "y": 1 } }
+          }
+        },
+        {
+          "en": 1.8,
+          "pose": {
+            "grados": { "torso": -1.5, "cabeza": 2, "brazo-sup-izq": -2.5, "brazo-sup-der": -2.5 },
+            "escalas": { "torso": { "x": 1.02, "y": 1 } }
+          }
+        },
+        { "en": 2.4, "pose": { "grados": { "torso": 0, "cabeza": 0, "brazo-sup-izq": 0, "brazo-sup-der": 0 } } }
+      ]
+    },
+    {
+      "id": "caminar",
+      "nombre": "Caminar",
+      "duracion": 0.8,
+      "bucle": true,
+      "fotogramas": [
+        {
+          "en": 0,
+          "pose": {
+            "grados": {
+              "pierna-sup-izq": 22,
+              "pierna-sup-der": 22,
+              "pierna-inf-izq": -10,
+              "pierna-inf-der": -10,
+              "brazo-sup-izq": -16,
+              "brazo-sup-der": -16,
+              "torso": 2,
+              "cabeza": 0
+            }
+          }
+        },
+        {
+          "en": 0.2,
+          "pose": {
+            "grados": {
+              "pierna-sup-izq": 0,
+              "pierna-sup-der": 0,
+              "pierna-inf-izq": 16,
+              "pierna-inf-der": 16,
+              "brazo-sup-izq": 0,
+              "brazo-sup-der": 0,
+              "torso": 0,
+              "cabeza": 1
+            }
+          }
+        },
+        {
+          "en": 0.4,
+          "pose": {
+            "grados": {
+              "pierna-sup-izq": -22,
+              "pierna-sup-der": -22,
+              "pierna-inf-izq": 10,
+              "pierna-inf-der": 10,
+              "brazo-sup-izq": 16,
+              "brazo-sup-der": 16,
+              "torso": 2,
+              "cabeza": 0
+            }
+          }
+        },
+        {
+          "en": 0.6,
+          "pose": {
+            "grados": {
+              "pierna-sup-izq": 0,
+              "pierna-sup-der": 0,
+              "pierna-inf-izq": -16,
+              "pierna-inf-der": -16,
+              "brazo-sup-izq": 0,
+              "brazo-sup-der": 0,
+              "torso": 0,
+              "cabeza": 1
+            }
+          }
+        },
+        {
+          "en": 0.8,
+          "pose": {
+            "grados": {
+              "pierna-sup-izq": 22,
+              "pierna-sup-der": 22,
+              "pierna-inf-izq": -10,
+              "pierna-inf-der": -10,
+              "brazo-sup-izq": -16,
+              "brazo-sup-der": -16,
+              "torso": 2,
+              "cabeza": 0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "saltar",
+      "nombre": "Saltar",
+      "duracion": 0.7,
+      "bucle": false,
+      "fotogramas": [
+        { "en": 0, "pose": { "desplazamientos": { "torso": { "x": -36, "y": 80 } } } },
+        {
+          "en": 0.14,
+          "pose": {
+            "desplazamientos": { "torso": { "x": -36, "y": 88 } },
+            "grados": { "pierna-sup-izq": 16, "pierna-sup-der": 16, "torso": 8 }
+          }
+        },
+        {
+          "en": 0.32,
+          "pose": {
+            "desplazamientos": { "torso": { "x": -36, "y": 54 } },
+            "grados": { "pierna-sup-izq": -8, "pierna-sup-der": -8, "brazo-sup-izq": -120, "brazo-sup-der": 120, "torso": -4 }
+          }
+        },
+        {
+          "en": 0.52,
+          "pose": {
+            "desplazamientos": { "torso": { "x": -36, "y": 70 } },
+            "grados": { "pierna-sup-izq": 10, "pierna-sup-der": 10, "brazo-sup-izq": -40, "brazo-sup-der": 40 }
+          }
+        },
+        { "en": 0.7, "pose": { "desplazamientos": { "torso": { "x": -36, "y": 80 } }, "grados": { "pierna-sup-izq": 0, "pierna-sup-der": 0, "brazo-sup-izq": 0, "brazo-sup-der": 0, "torso": 0 } } }
+      ]
+    },
+    {
+      "id": "saludar",
+      "nombre": "Saludar con la mano",
+      "duracion": 1.6,
+      "bucle": false,
+      "fotogramas": [
+        { "en": 0, "pose": { "grados": { "brazo-sup-der": 0, "brazo-inf-der": 0, "cabeza": 0 } } },
+        { "en": 0.25, "pose": { "grados": { "brazo-sup-der": -155, "brazo-inf-der": -18, "cabeza": -3 } } },
+        { "en": 0.5, "pose": { "grados": { "brazo-sup-der": -155, "brazo-inf-der": -48, "cabeza": -3 } } },
+        { "en": 0.75, "pose": { "grados": { "brazo-sup-der": -155, "brazo-inf-der": -10, "cabeza": -3 } } },
+        { "en": 1.0, "pose": { "grados": { "brazo-sup-der": -155, "brazo-inf-der": -48, "cabeza": -3 } } },
+        { "en": 1.25, "pose": { "grados": { "brazo-sup-der": -155, "brazo-inf-der": -10, "cabeza": -3 } } },
+        { "en": 1.6, "pose": { "grados": { "brazo-sup-der": 0, "brazo-inf-der": 0, "cabeza": 0 } } }
+      ]
+    }
+  ]
+}

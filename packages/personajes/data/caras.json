@@ -1,0 +1,14 @@
+{
+  "_comentario": "El catálogo de caras. Son solo IDS de textura: la cara se ARMA eligiendo de acá (como en los Miis), y si la textura todavía no existe, la pieza se dibuja con su color y el personaje igual se ve. Los ids se resuelven en el adaptador de render.",
+  "catalogos": [
+    {
+      "id": "familia",
+      "nombre": "Familia",
+      "ojos": ["ojo-normal", "ojo-grande", "ojo-dormido", "ojo-contento"],
+      "cejas": ["ceja-normal", "ceja-alta", "ceja-enojada"],
+      "narices": ["nariz-chica", "nariz-redonda", "nariz-larga"],
+      "bocas": ["boca-sonrisa", "boca-abierta", "boca-seria", "boca-sorpresa"],
+      "pelos": ["pelo-corto", "pelo-largo", "pelo-mohawk", "pelo-coloquial"]
+    }
+  ]
+}

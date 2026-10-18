@@ -1,0 +1,13 @@
+{
+  "name": "@juegosemi/personajes",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Sistema de personajes articulados 2D (tipo Mii / South Park): rig de datos, piezas, caras y boca de ventrilocuo",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@juegosemi/puertos": "*"
+  }
+}
