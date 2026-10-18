@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Armá tu personaje</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; overflow: hidden;
+    background: #0d1117; color: #e6edf3;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  #marco { position: fixed; inset: 0; display: flex; flex-direction: column; }
+  #barra {
+    flex: 0 0 auto; display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px; background: #161b22; border-bottom: 2px solid #30363d;
+  }
+  #titulo { font-size: clamp(20px, 3.2vw, 34px); font-weight: 800; margin: 0; flex: 1 1 auto; text-align: center; }
+  #cuerpo { flex: 1 1 auto; display: flex; min-height: 0; }
+  #escenario { flex: 1 1 55%; position: relative; min-width: 0; touch-action: none; }
+  #escenario canvas { display: block; width: 100%; height: 100%; }
+  #opciones { flex: 1 1 45%; min-width: 0; overflow-y: auto; padding: 12px;
+    background: #11161d; border-left: 2px solid #30363d; }
+  .grupo { margin-bottom: 14px; }
+  .grupo h2 { font-size: clamp(15px, 2vw, 20px); margin: 0 0 8px; color: #9fb0c5; }
+  .fila { display: flex; flex-wrap: wrap; gap: 8px; }
+  button.opcion {
+    font: inherit; font-weight: 700; border: 2px solid #30363d; border-radius: 14px;
+    background: #1c2430; color: #e6edf3; padding: 12px 16px; min-height: 56px; min-width: 56px;
+  }
+  button.opcion[aria-pressed="true"] { background: #238636; border-color: #3fb950; }
+  button.opcion:active { transform: scale(0.96); }
+  #acciones { flex: 0 0 auto; display: flex; flex-wrap: wrap; gap: 10px; padding: 10px 14px;
+    background: #161b22; border-top: 2px solid #30363d; }
+  button.accion {
+    font: inherit; font-weight: 800; border: 0; border-radius: 16px;
+    background: #1f6feb; color: #fff; padding: 16px 22px; min-height: 64px; font-size: clamp(16px, 2.2vw, 22px);
+  }
+  button.accion:active { transform: scale(0.97); }
+  #aviso { position: fixed; left: 50%; top: 12%; transform: translateX(-50%);
+    background: #12492b; border: 2px solid #3fb950; border-radius: 14px;
+    padding: 12px 20px; font-size: clamp(17px, 2.4vw, 24px); font-weight: 800;
+    opacity: 0; pointer-events: none; transition: opacity 180ms; z-index: 30; }
+  #aviso.visible { opacity: 1; }
+</style>
+</head>
+<body>
+<!-- La estructura está fija a propósito: el taller se arma acá y el dibujo del
+     personaje va dentro de #escenario. Las opciones y los botones se generan con
+     @juegosemi/ui (botones grandes, accesibles). -->
+<div id="marco">
+  <div id="barra">
+    <button class="accion" id="volver">Volver</button>
+    <h1 id="titulo">Armá tu personaje</h1>
+  </div>
+  <div id="cuerpo">
+    <div id="escenario" aria-label="Tu personaje"></div>
+    <div id="opciones" aria-label="Las opciones del personaje"></div>
+  </div>
+  <div id="acciones">
+    <button class="accion" id="hablar">Que hable</button>
+    <button class="accion" id="caminar">Que camine</button>
+    <button class="accion" id="saludar">Que salude</button>
+    <button class="accion" id="guardar">Guardar</button>
+  </div>
+</div>
+<div id="aviso" role="status" aria-live="polite"></div>
+<script type="module" src="./main.js"></script>
+</body>
+</html>

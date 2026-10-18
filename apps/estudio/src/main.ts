@@ -41,7 +41,7 @@ const ENTRADAS: Entrada[] = [
     titulo: 'Armá tu personaje',
     detalle: 'Elegí cara, pelo, polera y zapatos.',
     ruta: './taller/index.html',
-    disponible: false,
+    disponible: true,
   },
 ];
 

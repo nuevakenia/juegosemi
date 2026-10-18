@@ -1,0 +1,13 @@
+{
+  "name": "@juegosemi/taller",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Taller de personajes: armar el personaje tocando botones grandes (cara, pelo, ropa) y guardarlo para usarlo en los juegos",
+  "dependencies": {
+    "@juegosemi/adaptadores-web": "*",
+    "@juegosemi/personajes": "*",
+    "@juegosemi/render-pixi": "*",
+    "@juegosemi/ui": "*"
+  }
+}
