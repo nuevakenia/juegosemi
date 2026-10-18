@@ -1,0 +1,58 @@
+{
+  "id": "viaje-casa-tia",
+  "titulo": "Vamos a la casa de la tía",
+  "mundo": {
+    "variables": { "premio-del-dia": "casa-de-la-tia" },
+    "contadores": { "maletas_en_auto": 0 },
+    "objetos": { "viaje-activo": false, "en-la-casa": false }
+  },
+  "reglas": [
+    {
+      "id": "subir-maleta",
+      "si": { "evento": "entidad_soltada", "destino": "auto" },
+      "hacer": ["ocultar($entidad)", "sumar(maletas_en_auto, 1)", "sonar(bien)"]
+    },
+    {
+      "id": "listo-para-viajar",
+      "si": { "contador": "maletas_en_auto", "al_menos": 3 },
+      "hacer": ["activar(viaje-activo)", "decir(abuelo, \"¡vamos!\")", "mostrar(manivela)"]
+    },
+    {
+      "id": "pedir-la-manivela",
+      "si": { "activo": "viaje-activo" },
+      "hacer": ["pedir_gesto(circulo, 3, manivela)"]
+    },
+    {
+      "id": "arrancamos",
+      "si": { "y": [ { "evento": "gesto_completado", "gesto": "circulo", "destino": "manivela", "veces": 3 } ] },
+      "hacer": ["ocultar(manivela)", "sonar(partida)", "decir(abuelo, \"¡arrancamos!\")"]
+    },
+    {
+      "id": "llegamos-a-la-casa",
+      "si": { "evento": "zona_entrada", "zona": "casa-de-la-tia" },
+      "hacer": ["activar(en-la-casa)", "sonar(festejo)"]
+    }
+  ],
+  "misiones": [
+    {
+      "id": "maletas",
+      "texto": "Subir las maletas al auto",
+      "cumple": { "contador": "maletas_en_auto", "al_menos": 3 },
+      "requiere": []
+    },
+    {
+      "id": "manejar",
+      "texto": "Manejar hasta la casa de la tía",
+      "cumple": { "y": [ { "activo": "viaje-activo" }, { "activo": "en-la-casa" } ] },
+      "requiere": ["maletas"]
+    },
+    {
+      "id": "llegar",
+      "texto": "¡Llegamos! Ver el video",
+      "cumple": { "y": [ { "mision": "manejar", "hecha": true }, { "activo": "en-la-casa" } ] },
+      "requiere": ["manejar"],
+      "recompensa": ["reproducir_video($premio-del-dia)", "celebrar"]
+    }
+  ],
+  "nivel_terminado": { "y": [ { "mision": "llegar", "hecha": true } ] }
+}

@@ -68,6 +68,8 @@ eventos. Todo lo demás entra por un contrato (`packages/puertos`):
       │      │                     (NO importa PixiJS, ni DOM, ni Android)
       │      └── packages/puertos  ← la frontera
       │
+      ├── packages/logica          eventos · reglas (si→entonces) · mundo · misiones
+      │                            (tampoco conoce el render: avisa por Efectos)
       ├── packages/render-pixi     implementa AdaptadorRender
       ├── packages/adaptadores-web implementa entrada, audio, video, pantalla,
       │                            almacenamiento y plataforma
@@ -202,9 +204,27 @@ Reglas del ciclo, y por qué:
    Chromium efectivos. Define si el render necesita bajar a WebGL1 y si el video va por
    `<video>` o por reproductor nativo.
 2. Fotos de los autos y caras de la familia al juego de los autos.
-3. Taller de personajes (usar `packages/personajes` desde una pantalla).
+3. ~~Taller de personajes~~ **HECHO** (mergeado y en el APK).
 4. Lector de videos (H.264) con interfaz grande, sin publicidad y sin salir de la app.
 5. Orquestación por timeline: la primera escena con video (llegar a la casa de la tía y
    que aparezca el video del cerro).
 6. Puertos nuevos cuando hagan falta: micrófono (reconocer palabras y gatillar),
    giroscopio, cámara.
+7. ~~Lógica para crear modos de juego~~ **HECHO** (`packages/logica`, ver abajo).
+8. Lo que sigue del sistema de lógica: gestos tipo QTE, editor de niveles en la tablet,
+   el episodio del viaje y las recompensas dinámicas — el plan está en
+   `docs/DISENO-LOGICA.md`.
+
+## La lógica de los juegos (`packages/logica`)
+
+Arriba del motor, y sin conocer el render, un juego se describe en DATOS:
+
+    mundo     qué recuerda (variables, contadores, interruptores)
+    reglas    si <condición> → <acciones>, evaluadas cada paso y ENCADENADAS
+    misiones  qué hay que lograr, con prerrequisitos (el orden manda)
+
+Lo que toca pantalla, sonido o video se avisa por `Efectos.aplicar(...)`: por eso toda
+la lógica se prueba sin navegador. El nivel de ejemplo es
+`packages/logica/data/viaje-casa-tia.json` (subir las maletas → girar la manivela →
+llegar a la casa → sale el video del premio) y se juega entero en `episodio.test.ts`.
+El **editor de la tablet** va a escribir exactamente este mismo formato.

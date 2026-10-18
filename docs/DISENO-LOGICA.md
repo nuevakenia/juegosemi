@@ -223,13 +223,28 @@ y multijugador.
 
 ## 9. Plan por fases (cada una se prueba sola)
 
-| Fase | Qué | Tamaño |
-|---|---|---|
-| **F1** | `packages/logica`: eventos, reglas, condiciones, acciones, misiones. Tests puros. | 8 |
-| **F2** | Gestos: puerto + adaptador táctil (toque repetido, mantener, círculo, dirección) + un juego corto que los use. | 5 |
-| **F3** | `apps/editor`: armar situaciones con plantillas en la tablet, guardar, exportar/importar. | 8 |
-| **F4** | Episodio piloto completo: el viaje a la casa de la tía (maletas → auto → manivela → llegar → video). | 5 |
-| **F5** | Recompensas dinámicas y refuerzo (cambiar el video/premio del día desde el editor). | 3 |
+| Fase | Qué | Tamaño | Estado |
+|---|---|---|---|
+| **F1** | `packages/logica`: eventos, reglas, condiciones, acciones, misiones. Tests puros. | 8 | **HECHO** |
+| **F2** | Gestos: puerto + adaptador táctil (toque repetido, mantener, círculo, dirección) + un juego corto que los use. | 5 | pendiente |
+| **F3** | `apps/editor`: armar situaciones con plantillas en la tablet, guardar, exportar/importar. | 8 | pendiente |
+| **F4** | Episodio piloto completo: el viaje a la casa de la tía (maletas → auto → manivela → llegar → video). | 5 | pendiente |
+| **F5** | Recompensas dinámicas y refuerzo (cambiar el video/premio del día desde el editor). | 3 | pendiente |
 
 Orden: F1 primero (todo lo demás se apoya ahí), después F2 (que hace divertido jugar),
 F4 con lo que ya exista de video, y F3 cuando la lógica esté estable.
+
+### F1 — cómo quedó (lo que hay que saber para seguir)
+
+- El nivel de ejemplo vive en `packages/logica/data/viaje-casa-tia.json` y el test
+  `episodio.test.ts` lo juega de punta a punta (subir 3 maletas → 3 vueltas de manivela
+  → llegar a la zona → sale el video de la variable `$premio-del-dia` → nivel terminado).
+- **Encadenamiento con tope**: las reglas se evalúan en vueltas (hasta 8) y si una
+  cambió el mundo se vuelve a empezar. Es lo que hace que "subió las 3 maletas" active
+  "arrancar el viaje" y eso pida la manivela, sin programar nada.
+- **Los eventos no sobreviven al paso**: una regla de evento reacciona en el paso en que
+  pasó, y no tres segundos después.
+- **Comodines**: `$entidad`/`$destino`/`$zona` salen del evento que gatilló la regla, y
+  cualquier otro `$nombre` se busca en las variables del mundo.
+- **Comandos**: `npx vitest run packages/logica` (92 tests) · `bash tools/verificar.sh`
+  (364 tests, typecheck y build del combo).

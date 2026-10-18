@@ -1,0 +1,14 @@
+{
+  "name": "@juegosemi/logica",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "El sistema de logica de los juegos: eventos, reglas (si esto entonces esto), mundo con memoria y misiones con prerrequisitos. Lleva 100% en datos, sin conocer render ni plataforma",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@juegosemi/motor": "*",
+    "@juegosemi/puertos": "*"
+  }
+}
