@@ -51,6 +51,14 @@ const ENTRADAS: Entrada[] = [
     ruta: './taller/index.html',
     disponible: true,
   },
+  {
+    id: 'editor',
+    emoji: '🛠️',
+    titulo: 'Armá tu juego',
+    detalle: 'Tocá botones y armá tus propias reglas.',
+    ruta: './editor/index.html',
+    disponible: true,
+  },
 ];
 
 function pintar(): void {

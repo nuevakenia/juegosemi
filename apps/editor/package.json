@@ -1,0 +1,16 @@
+{
+  "name": "@juegosemi/editor",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Editor de niveles: armar un juego tocando botones grandes (cuándo, quién y entonces), ver las reglas en castellano y probarlas sin salir de la pantalla",
+  "dependencies": {
+    "@juegosemi/adaptadores-web": "*",
+    "@juegosemi/logica": "*",
+    "@juegosemi/motor": "*",
+    "@juegosemi/puertos": "*",
+    "@juegosemi/recompensas": "*",
+    "@juegosemi/render-pixi": "*",
+    "@juegosemi/ui": "*"
+  }
+}

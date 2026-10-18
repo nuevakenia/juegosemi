@@ -28,6 +28,7 @@ const COMBO = [
   { app: 'apps/episodio-viaje', salida: 'dist/juegos/viaje', url: '/juegos/viaje/' },
   { app: 'apps/taller', salida: 'dist/taller', url: '/taller/' },
   { app: 'apps/videos', salida: 'dist/videos', url: '/videos/' },
+  { app: 'apps/editor', salida: 'dist/editor', url: '/editor/' },
 ];
 
 const args = process.argv.slice(2);

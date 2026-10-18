@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Armá tu juego</title>
+<!-- El empaquetador junta acá el CSS del paquete ui y el propio del editor. -->
+<link rel="stylesheet" href="./main.css">
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0;
+    background: var(--js-color-fondo, #fdf6e3);
+    color: var(--js-color-texto, #16202b);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+
+  /* ── El editor (todo se lee de un tirón y se toca con dedos grandes) ── */
+  .editor {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+  .cabecera { display: flex; flex-direction: column; gap: 0.35rem; }
+  .cabecera__titulo {
+    font: inherit;
+    font-size: clamp(1.75rem, 5vw, 2.75rem);
+    font-weight: 800;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 0.25rem solid var(--js-color-borde, #16202b);
+    border-radius: 1rem;
+    background: var(--js-color-superficie, #fff);
+    color: inherit;
+  }
+  .cabecera__bajada { margin: 0; font-size: clamp(1rem, 2.6vw, 1.35rem); color: var(--js-color-texto-suave, #43536a); }
+
+  .cosas, .regla, .barra, .aviso {
+    background: var(--js-color-superficie, #fff);
+    border: 0.25rem solid var(--js-color-borde, #16202b);
+    border-radius: 1.25rem;
+    padding: 1rem;
+  }
+  .cosas__titulo, .regla__titulo { margin: 0 0 0.5rem; font-size: clamp(1.25rem, 3.5vw, 1.75rem); }
+  .grupo { margin-bottom: 0.75rem; }
+  .grupo__titulo { margin: 0 0 0.35rem; font-size: clamp(1rem, 2.6vw, 1.25rem); color: var(--js-color-texto-suave, #43536a); }
+  .fila { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    padding: 0.4rem 0.4rem 0.4rem 0.85rem;
+    border: 0.2rem solid var(--js-color-borde, #16202b);
+    border-radius: 2rem;
+    background: var(--js-color-fondo, #fdf6e3);
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    font-weight: 700;
+  }
+  .chip__sacar { min-height: 2.6rem !important; min-width: 2.6rem !important; padding: 0.2rem 0.6rem !important; font-size: 1.2rem !important; box-shadow: none !important; background: var(--js-color-texto, #16202b) !important; }
+  .agregar { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.4rem; }
+  .agregar__boton { min-height: 3.2rem !important; font-size: 1.1rem !important; }
+
+  .campo {
+    font: inherit;
+    font-size: clamp(1rem, 2.6vw, 1.2rem);
+    padding: 0.6rem 0.8rem;
+    min-height: 3.2rem;
+    border: 0.2rem solid var(--js-color-borde, #16202b);
+    border-radius: 0.9rem;
+    background: var(--js-color-fondo, #fdf6e3);
+    color: inherit;
+    flex: 1 1 12rem;
+  }
+  .campo--numero { max-width: 8rem; }
+
+  /* Las opciones de cada paso: botones grandes, uno al lado del otro */
+  .opciones { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .opciones .js-boton, .opcion {
+    min-height: 3.4rem !important;
+    font-size: clamp(1rem, 2.4vw, 1.25rem) !important;
+    padding: 0.5rem 1rem !important;
+  }
+  .opcion[aria-pressed="true"] { background: #238636 !important; }
+
+  .barra { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+  .barra__cuenta { margin: 0; flex: 1 1 12rem; font-size: clamp(1rem, 2.6vw, 1.3rem); font-weight: 700; }
+  .barra__probar { background: #238636 !important; }
+  .barra__probar:disabled { background: var(--js-color-apagado, #b9c2cf) !important; }
+
+  .aviso { background: #fff7e0; border-color: #b8860b; }
+  .aviso--listo { background: #e8f7ea; border-color: #2f6f4f; }
+  .aviso__titulo { margin: 0 0 0.4rem; font-weight: 800; font-size: clamp(1.05rem, 2.6vw, 1.3rem); }
+  .aviso__lista { margin: 0; padding-left: 1.2rem; font-size: clamp(1rem, 2.4vw, 1.15rem); }
+  .aviso__lista li { margin-bottom: 0.2rem; }
+
+  .reglas { display: flex; flex-direction: column; gap: 1rem; }
+  .reglas__vacio { margin: 0; font-size: clamp(1.05rem, 2.6vw, 1.3rem); color: var(--js-color-texto-suave, #43536a); }
+  .regla__frase { margin: 0 0 0.75rem; font-size: clamp(1.1rem, 3vw, 1.5rem); font-weight: 700; line-height: 1.3; }
+  .regla__pasos { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .regla__pie { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.75rem; }
+  .regla__flecha { min-height: 3rem !important; font-size: 1.05rem !important; background: var(--js-color-primario-oscuro, #14508f) !important; }
+  .regla__borrar { min-height: 3rem !important; font-size: 1.05rem !important; background: #a4302f !important; }
+
+  .panel { margin-top: 0.85rem; padding: 0.85rem; border-radius: 1rem; background: var(--js-color-fondo, #fdf6e3); border: 0.2rem dashed var(--js-color-borde, #16202b); }
+  .panel__titulo { margin: 0 0 0.6rem; font-weight: 800; font-size: clamp(1.05rem, 2.6vw, 1.3rem); }
+  .pregunta { margin-bottom: 0.7rem; }
+  .pregunta__titulo { margin: 0 0 0.35rem; font-weight: 700; font-size: clamp(1rem, 2.5vw, 1.2rem); }
+  .pregunta__nota { margin: 0.25rem 0 0; color: var(--js-color-texto-suave, #43536a); }
+  .accion { padding: 0.6rem; margin-bottom: 0.6rem; border-radius: 0.9rem; background: var(--js-color-superficie, #fff); border: 0.2rem solid var(--js-color-borde, #16202b); }
+  .accion__titulo { margin: 0 0 0.4rem; font-weight: 800; font-size: clamp(1.05rem, 2.6vw, 1.3rem); }
+  .accion__sacar { min-height: 2.8rem !important; font-size: 1rem !important; background: #a4302f !important; }
+
+  /* ── El tablero de la prueba (tapa todo mientras se juega) ── */
+  #prueba { display: none; position: fixed; inset: 0; z-index: 90; flex-direction: column; background: #0d1117; color: #e6edf3; }
+  #prueba.visible { display: flex; }
+  .prueba { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+  .prueba__barra { flex: 0 0 auto; display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0.9rem; background: #161b22; border-bottom: 2px solid #30363d; }
+  .prueba__titulo { margin: 0; flex: 1 1 auto; font-size: clamp(1.1rem, 3vw, 1.6rem); }
+  .prueba__volver { min-height: 3rem !important; font-size: 1.05rem !important; }
+  .prueba__aviso { flex: 0 0 auto; margin: 0; padding: 0.5rem 0.9rem; text-align: center; font-weight: 800; font-size: clamp(1rem, 2.6vw, 1.3rem); background: #161b22; border-bottom: 2px solid #30363d; }
+  .prueba__aviso--festejo { background: #12492b; border-bottom-color: #3fb950; }
+  .prueba__lienzo { flex: 1 1 auto; position: relative; min-height: 0; touch-action: none; user-select: none; }
+  .prueba__lienzo canvas { display: block; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<!-- La estructura está fija a propósito: el editor se arma dentro de #editor y la
+     prueba en vivo tapa todo dentro de #prueba. -->
+<div id="editor" aria-label="El editor de niveles"></div>
+<div id="prueba" aria-label="Probando el juego"></div>
+<script type="module" src="./main.js"></script>
+</body>
+</html>

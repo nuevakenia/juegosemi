@@ -85,6 +85,7 @@ async function principal() {
     await construirApp('apps/episodio-viaje', 'dist/juegos/viaje');
     await construirApp('apps/taller', 'dist/taller');
     await construirApp('apps/videos', 'dist/videos');
+    await construirApp('apps/editor', 'dist/editor');
     const peso = await pesoDe(join(RAIZ, 'dist'));
     console.log(`combo listo: dist/ (${(peso / 1024 / 1024).toFixed(2)} MB en total)`);
     return;
