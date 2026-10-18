@@ -1,0 +1,10 @@
+{
+  "name": "@juegosemi/puertos",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Contratos (interfaces) entre el motor y cada plataforma: video, audio, input, almacenamiento, plataforma",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

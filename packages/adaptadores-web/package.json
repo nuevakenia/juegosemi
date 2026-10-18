@@ -1,0 +1,13 @@
+{
+  "name": "@juegosemi/adaptadores-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Implementaciones de los puertos para el navegador (y para el WebView de Android): video HTML, audio WebAudio, input tactil, almacenamiento local",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@juegosemi/puertos": "*"
+  }
+}

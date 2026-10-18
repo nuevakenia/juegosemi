@@ -1,0 +1,15 @@
+{
+  "name": "@juegosemi/render-pixi",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Adaptador de render 2D sobre PixiJS 8: convierte la escena del motor en contenedores y sprites",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@juegosemi/motor": "*",
+    "@juegosemi/personajes": "*",
+    "pixi.js": "^8.22.0"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "@juegosemi/motor",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Nucleo agnostico de plataforma: escena, entidades, ticker, input, audio y el interprete del timeline declarativo",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@juegosemi/puertos": "*"
+  }
+}
