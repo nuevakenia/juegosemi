@@ -68,7 +68,7 @@ export class Logica {
     this.nivel = nivel;
     this.efectos = efectos;
     this.mundo = new Mundo(nivel.mundo ?? {});
-    this.misiones = new Misiones(nivel.misiones ?? []);
+    this.misiones = new Misiones(this.misionesDeclaradas());
   }
 
   // ── Lo que el juego llama cuando pasa algo ────────────────────────────────
@@ -226,7 +226,8 @@ export class Logica {
   }
 
   private reglasOrdenadas(): Regla[] {
-    return [...this.nivel.reglas].sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0));
+    const reglas = Array.isArray(this.nivel.reglas) ? this.nivel.reglas : [];
+    return [...reglas].sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0));
   }
 
   /**
@@ -309,8 +310,13 @@ export class Logica {
     if (this.nivel.nivel_terminado !== undefined) {
       return this.cumple(this.nivel.nivel_terminado, this.sustituidor(null));
     }
-    if ((this.nivel.misiones ?? []).length === 0) return false;
+    if (this.misionesDeclaradas().length === 0) return false;
     return this.misiones.pendientes().length === 0;
+  }
+
+  /** Las misiones declaradas en los datos (si el campo no es una lista, ninguna). */
+  private misionesDeclaradas(): readonly Mision[] {
+    return Array.isArray(this.nivel.misiones) ? this.nivel.misiones : [];
   }
 
   private terminar(motivo: 'accion' | 'misiones'): void {

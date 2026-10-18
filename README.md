@@ -39,6 +39,11 @@ código) para poder trabajarlo con un agente de IA de forma autónoma.
                               almacenamiento, plataforma, adaptador de render
     packages/motor            escena, ticker de pasos fijos, arrastre, timeline,
                               bucle del juego. NO sabe de qué plataforma corre
+    packages/logica           un juego descrito en datos: mundo con memoria (variables,
+                              contadores, interruptores), eventos, reglas "si esto →
+                              entonces esto" con encadenamiento, misiones con
+                              prerrequisitos y su validador. Se engancha al motor con
+                              `Puente` (escena, arrastre, gestos, timeline)
     packages/render-pixi      el único lugar que conoce PixiJS
     packages/adaptadores-web  lo que existe en el navegador/WebView: <video>, audio,
                               dedo/mouse, pantalla, plataforma

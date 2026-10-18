@@ -246,5 +246,35 @@ F4 con lo que ya exista de video, y F3 cuando la lógica esté estable.
   pasó, y no tres segundos después.
 - **Comodines**: `$entidad`/`$destino`/`$zona` salen del evento que gatilló la regla, y
   cualquier otro `$nombre` se busca en las variables del mundo.
-- **Comandos**: `npx vitest run packages/logica` (92 tests) · `bash tools/verificar.sh`
-  (364 tests, typecheck y build del combo).
+- **`una_vez` se rearma** (por defecto sí): una regla no se repite MIENTRAS su condición
+  siga cumpliéndose, y se vuelve a armar cuando la condición se apaga. Por eso UNA regla
+  de "soltar maleta sobre el auto" sirve para las tres maletas (el evento se tira al
+  final del paso) y una que mira un interruptor dispara una sola vez.
+- **Las reglas publican lo que hacen**: `activar`/`desactivar` avisa
+  `objeto_activado`/`objeto_desactivado` y `marcar` avisa `variable_cambiada`, para que
+  la regla siguiente pueda reaccionar a lo que hizo la anterior en el mismo paso.
+- **Misiones por pasadas atómicas y encadenadas**: en cada pasada los prerrequisitos se
+  miran como estaban al empezarla, y la lógica repite la pasada hasta que no se cumple
+  ninguna nueva. Así `manejar` y `llegar` se cumplen en el mismo paso (encadenadas) pero
+  `llegar` nunca se cumple saltándose `manejar`.
+- **Estados de misión**: `pendiente` (le faltan prerrequisitos) → `en_curso` (están
+  puestos, todavía sin cumplir) → `hecha`. La condición `{ mision, disponible }` pregunta
+  por "tiene los prerrequisitos puestos", que no es "está hecha".
+- **`completar(mision)`** existe y respeta el orden: si le faltan prerrequisitos no la
+  completa (nadie se salta pasos por datos). **`nivel_terminado`** manda cuando está: si
+  el nivel lo declara, no alcanza con cumplir todas las misiones.
+- **El puente con el motor** (`src/puente.ts`): `new Puente(nivel, { escena, audio, video,
+  timeline, avisos })` engancha el arrastre (`entidad_soltada`), los toques
+  (`entidad_tocada` con la cuenta de machaque en una ventana de 3 s), las zonas
+  (`entrarZona`), los gestos (`gestoCompletado`) y el timeline del motor (cada regla que
+  corre avisa `paso_completado` y su acción se aplica igual que las demás). Aplica
+  `mostrar/ocultar/mover/escalar` sobre la `Escena`, `sonar` por el puerto de audio,
+  `reproducir_video` por el de video, y lo que necesita decisión del juego (`decir`,
+  `animar`, `celebrar`, `mostrar_mensaje`, o algo que no está en la escena) sale por
+  llamadas (`avisos`). El motor no se tocó: el `Timeline` que arma el puente se le pasa al
+  `Juego` como `deps.timeline` y el `paso()` del puente va en `alPaso`.
+- **Comandos**: `npx vitest run packages/logica` (98 tests) · `bash tools/verificar.sh`
+  (382 tests, typecheck y build del combo).
+- **Lo que le toca al juego** (siguiente tarjeta): el adaptador de gestos (F2) y la app del
+  episodio (F4) que use el `Puente` con un render y los puertos reales. Acá no hay
+  navegador: todo se prueba con escena de verdad y puertos de mentira.

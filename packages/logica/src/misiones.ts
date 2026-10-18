@@ -23,7 +23,9 @@ export class Misiones {
   private readonly estados = new Map<string, EstadoMision>();
 
   constructor(misiones: readonly Mision[] = []) {
-    this.definidas = [...misiones];
+    // Los datos pueden venir de un archivo o del editor: si no son una lista, se
+    // arranca sin misiones (el validador es el que dice qué está mal).
+    this.definidas = Array.isArray(misiones) ? [...misiones] : [];
     for (const mision of this.definidas) this.estados.set(mision.id, 'pendiente');
   }
 

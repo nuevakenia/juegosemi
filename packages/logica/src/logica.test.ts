@@ -193,6 +193,149 @@ describe('Logica: misiones y fin de nivel', () => {
   });
 });
 
+describe('Logica: una_vez se rearma cuando la condición se apaga', () => {
+  it('una regla de evento dispara una vez por evento (sirve para las tres maletas)', () => {
+    const e = espia();
+    const nivel: Nivel = {
+      id: 'rearmado',
+      mundo: { contadores: { piezas: 0 } },
+      reglas: [{ id: 'guardar', si: { evento: 'entidad_soltada', destino: 'caja' }, hacer: ['sumar(piezas, 1)'] }],
+    };
+    const logica = e.logica(nivel);
+    for (const id of ['p1', 'p2', 'p3']) {
+      logica.paso([{ tipo: 'entidad_soltada', entidad: id, destino: 'caja' }]);
+    }
+    expect(logica.mundo.contador('piezas')).toBe(3);
+    // Un paso sin evento no vuelve a disparar (no se queda pegado al evento viejo).
+    logica.paso([]);
+    expect(logica.mundo.contador('piezas')).toBe(3);
+  });
+
+  it('se rearma cuando la condición se apaga y vuelve a encenderse', () => {
+    const e = espia();
+    const nivel: Nivel = {
+      id: 'rearme',
+      mundo: { objetos: { alarma: false } },
+      reglas: [{ id: 'avisar', si: { activo: 'alarma' }, hacer: ['celebrar'] }],
+    };
+    const logica = e.logica(nivel);
+    logica.mundo.activar('alarma');
+    logica.paso([]);
+    logica.paso([]);
+    expect(e.efectos).toHaveLength(1); // prendida: dispara una sola vez
+
+    logica.mundo.desactivar('alarma');
+    logica.paso([]);
+    logica.mundo.activar('alarma');
+    logica.paso([]);
+    expect(e.efectos).toHaveLength(2); // se apagó: quedó lista otra vez
+  });
+
+  it('una regla reacciona a una variable que cambió otra regla (en el mismo paso)', () => {
+    const e = espia();
+    const nivel: Nivel = {
+      id: 'variable-encadenada',
+      mundo: { objetos: { boton: true } },
+      reglas: [
+        { id: 'marcar', si: { activo: 'boton' }, hacer: ['marcar(color, rojo)'] },
+        { id: 'pintar', si: { evento: 'variable_cambiada', variable: 'color' }, hacer: ['mostrar(pintura)'] },
+      ],
+    };
+    const logica = e.logica(nivel);
+    logica.paso([]);
+    expect(e.efectos).toContainEqual({ nombre: 'mostrar', args: { objetivo: 'pintura' } });
+  });
+});
+
+describe('Logica: completar una misión desde una acción', () => {
+  it('la da por hecha, la informa y paga la recompensa', () => {
+    const e = espia();
+    const nivel: Nivel = {
+      id: 'completar',
+      mundo: { objetos: { listo: false } },
+      reglas: [{ id: 'fin', si: { activo: 'listo' }, hacer: ['completar(recojer)'] }],
+      misiones: [{ id: 'recojer', cumple: { activo: 'nunca' }, recompensa: ['celebrar'] }],
+    };
+    const logica = e.logica(nivel);
+    logica.mundo.activar('listo');
+    const paso = logica.paso([]);
+    expect(paso.cumplidas).toEqual(['recojer']);
+    expect(logica.misiones.estadoDe('recojer')).toBe('hecha');
+    expect(e.efectos).toContainEqual({ nombre: 'celebrar', args: {} });
+  });
+
+  it('NO se salta los prerrequisitos (el orden manda también acá)', () => {
+    const e = espia();
+    const nivel: Nivel = {
+      id: 'completar-orden',
+      mundo: { objetos: { listo: false } },
+      reglas: [{ id: 'saltar', si: { activo: 'listo' }, hacer: ['completar(b)'] }],
+      misiones: [
+        { id: 'a', cumple: { activo: 'a' } },
+        { id: 'b', cumple: { activo: 'b' }, requiere: ['a'] },
+      ],
+    };
+    const logica = e.logica(nivel);
+    logica.mundo.activar('listo');
+    const paso = logica.paso([]);
+    expect(paso.cumplidas).toEqual([]);
+    expect(logica.misiones.estadoDe('b')).toBe('pendiente');
+  });
+});
+
+describe('Logica: la condición de fin de nivel manda', () => {
+  it('con `nivel_terminado` propio no alcanza con cumplir las misiones', () => {
+    const e = espia();
+    const nivel: Nivel = {
+      id: 'fin-condicional',
+      reglas: [],
+      misiones: [{ id: 'a', cumple: { activo: 'a' } }],
+      nivel_terminado: { y: [{ activo: 'trofeo' }] },
+    };
+    const logica = e.logica(nivel);
+    logica.mundo.activar('a');
+    logica.paso([]);
+    expect(logica.misiones.estadoDe('a')).toBe('hecha');
+    expect(logica.terminadoNivel()).toBe(false);
+
+    logica.mundo.activar('trofeo');
+    logica.paso([]);
+    expect(logica.terminadoNivel()).toBe(true);
+  });
+});
+
+describe('Logica: los datos rotos no revientan el juego', () => {
+  it('un nivel con basura en los campos igual se puede correr (el validador avisa aparte)', () => {
+    const e = espia();
+    const roto = {
+      id: 'roto',
+      reglas: undefined,
+      misiones: 'nada',
+      mundo: { contadores: { x: 5 } },
+    } as unknown as Nivel;
+    const logica = e.logica(roto);
+    const paso = logica.paso([]);
+    expect(paso.acciones).toEqual([]);
+    expect(paso.nivelTerminado).toBe(false);
+    expect(logica.mundo.contador('x')).toBe(5);
+  });
+
+  it('una regla con una condición que no se entiende simplemente no dispara', () => {
+    const e = espia();
+    const nivel: Nivel = {
+      id: 'basura',
+      reglas: [
+        { id: 'rara', si: { color: 'rojo' } as never, hacer: ['celebrar'] },
+        { id: 'accion-rara', hacer: ['volar(alto)'] },
+      ],
+    };
+    const logica = e.logica(nivel);
+    logica.paso([]);
+    expect(e.efectos.map((a) => a.nombre)).toEqual(['volar']);
+    expect(e.efectos[0]?.args).toEqual({ arg0: 'alto' });
+  });
+});
+
 describe('Logica: estado para guardar la partida', () => {
   it('instantánea con mundo y misiones', () => {
     const e = espia();

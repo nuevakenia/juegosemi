@@ -71,4 +71,29 @@ describe('Misiones: qué hay que lograr y en qué orden', () => {
     expect(m.definicion('fantasma')).toBeNull();
     expect(m.estadoDe('fantasma')).toBeNull();
   });
+
+  it('disponible = tiene los requisitos puestos (no es lo mismo que hecha)', () => {
+    const m = new Misiones(tres);
+    expect(m.disponible('maletas')).toBe(true); // sin requisitos
+    expect(m.disponible('manejar')).toBe(false); // le falta "maletas"
+    expect(m.disponible('fantasma')).toBe(false);
+    m.actualizar((mi) => mi.id === 'maletas');
+    // El estado de `manejar` recién cambia en la pasada siguiente: cada pasada es
+    // atómica y el encadenamiento (una misión habilita la siguiente) lo hace quien
+    // llama, pasada tras pasada. Pero ya está disponible.
+    expect(m.disponible('manejar')).toBe(true);
+    expect(m.estadoDe('manejar')).toBe('pendiente');
+    m.actualizar(() => false);
+    expect(m.estadoDe('manejar')).toBe('en_curso');
+  });
+
+  it('completar a mano respeta los requisitos y no repite', () => {
+    const m = new Misiones(tres);
+    expect(m.completar('llegar')).toBeNull(); // le falta "manejar"
+    expect(m.estadoDe('llegar')).toBe('pendiente');
+    expect(m.completar('maletas')?.id).toBe('maletas');
+    expect(m.estadoDe('maletas')).toBe('hecha');
+    expect(m.completar('maletas')).toBeNull(); // ya estaba hecha: sin aviso doble
+    expect(m.completar('fantasma')).toBeNull();
+  });
 });

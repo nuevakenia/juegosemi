@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ACCIONES_LOCALES, aplicarAccionLocal, esLocal, parsearAccion, resolverAccion } from './acciones.ts';
 import { ColaEventos } from './eventos.ts';
+import { Misiones } from './misiones.ts';
 import { Mundo } from './mundo.ts';
 
 describe('parsearAccion: el texto legible', () => {
@@ -109,5 +110,37 @@ describe('aplicarAccionLocal: lo que hace sola', () => {
       expect(aplicarAccionLocal({ nombre, args: {} }, mundo, new ColaEventos()).resuelta).toBe(false);
     }
     expect(mundo.instantanea()).toEqual({ variables: {}, contadores: {}, objetos: {} });
+  });
+
+  it('completar deja la misión hecha (y sin misión no inventa nada)', () => {
+    const misiones = new Misiones([{ id: 'llegar', cumple: { activo: 'x' } }]);
+    const r = aplicarAccionLocal({ nombre: 'completar', args: { mision: 'llegar' } }, new Mundo(), new ColaEventos(), misiones);
+    expect(r.resuelta).toBe(true);
+    expect(r.misionCumplida).toBe('llegar');
+    expect(misiones.estadoDe('llegar')).toBe('hecha');
+
+    const fantasma = aplicarAccionLocal({ nombre: 'completar', args: { mision: 'otra' } }, new Mundo(), new ColaEventos(), misiones);
+    expect(fantasma.resuelta).toBe(true);
+    expect(fantasma.misionCumplida).toBeUndefined();
+    // Sin misiones (el juego no se las dio) tampoco revienta.
+    expect(aplicarAccionLocal({ nombre: 'completar', args: { mision: 'x' } }, new Mundo(), new ColaEventos()).misionCumplida).toBeUndefined();
+  });
+
+  it('activar y marcar avisan su evento, para que otra regla pueda reaccionar', () => {
+    const eventos = new ColaEventos();
+    const mundo = new Mundo();
+    aplicarAccionLocal({ nombre: 'activar', args: { objeto: 'viaje' } }, mundo, eventos);
+    expect(eventos.buscar('objeto_activado', { objeto: 'viaje' })).not.toBeNull();
+    // Volver a activar lo que ya estaba prendido no avisa de nuevo.
+    eventos.limpiarPaso();
+    aplicarAccionLocal({ nombre: 'activar', args: { objeto: 'viaje' } }, mundo, eventos);
+    expect(eventos.todos()).toHaveLength(0);
+
+    aplicarAccionLocal({ nombre: 'marcar', args: { variable: 'color', valor: 'rojo' } }, mundo, eventos);
+    expect(eventos.buscar('variable_cambiada', { variable: 'color' })).not.toBeNull();
+    // Marcar el mismo valor no avisa nada.
+    eventos.limpiarPaso();
+    aplicarAccionLocal({ nombre: 'marcar', args: { variable: 'color', valor: 'rojo' } }, mundo, eventos);
+    expect(eventos.todos()).toHaveLength(0);
   });
 });
